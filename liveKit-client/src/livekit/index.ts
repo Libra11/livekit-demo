@@ -1,7 +1,7 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-08-03 16:01:21
+ * @LastEditTime: 2023-08-04 15:51:10
  * @LastEditors: Libra
  * @Description:
  */
@@ -65,6 +65,29 @@ export default class LibraLiveKit extends EventEmitter {
 	async leaveRoom() {
 		const room = this.room
 		room && (await room.disconnect())
+	}
+	// get local device
+	getLocalDevices(type: 'audio' | 'video') {
+		switch (type) {
+			case 'audio':
+				return Room.getLocalDevices('audioinput')
+			case 'video':
+				return Room.getLocalDevices('videoinput')
+		}
+	}
+	// switch local device
+	async switchLocalDevice(type: 'audio' | 'video', deviceId: string) {
+		const room = this.room
+		if (!room) return
+		//   async switchActiveDevice(kind: MediaDeviceKind, deviceId: string, exact: boolean = false) {
+		switch (type) {
+			case 'audio':
+				await room.switchActiveDevice('audioinput', deviceId)
+				break
+			case 'video':
+				await room.switchActiveDevice('videoinput', deviceId)
+				break
+		}
 	}
 	initEvent() {
 		const room = this.room
