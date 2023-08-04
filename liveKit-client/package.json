@@ -26,7 +26,6 @@
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
 		"format": "prettier --write src/",
 		"commit": "git cz",
-		"prepare": "husky install",
 		"lint-staged": "lint-staged --allow-empty"
 	},
 	"dependencies": {
@@ -60,7 +59,6 @@
 		"eslint-plugin-cypress": "^2.12.1",
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-vue": "^9.9.0",
-		"husky": "^8.0.0",
 		"jsdom": "^21.1.0",
 		"lint-staged": "^13.1.2",
 		"mockjs": "^1.1.0",

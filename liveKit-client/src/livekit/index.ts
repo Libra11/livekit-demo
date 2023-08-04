@@ -1,11 +1,10 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-07-26 13:43:44
+ * @LastEditTime: 2023-08-03 16:01:21
  * @LastEditors: Libra
  * @Description:
  */
-import fetch from '@/request'
 import {
 	LocalParticipant,
 	LocalTrackPublication,
@@ -19,6 +18,8 @@ import {
 	VideoPresets,
 } from 'livekit-client'
 import { EventEmitter } from 'events'
+import { getToken } from '@/api/token'
+import { WEBSOCKET_URL } from '@/config/config'
 
 interface IInit {
 	userId: string
@@ -53,19 +54,22 @@ export default class LibraLiveKit extends EventEmitter {
 		})
 	}
 	async joinRoom() {
-		let res = await fetch<string>(`/token?identity=${this.userId}&roomName=${this.roomname}`)
+		const res = await getToken(this.userId, this.roomname)
+		const room = this.room
 		if (res.code === 200) {
-			if (!this.room) return
-			await this.room.connect('ws://127.0.0.1:7880', res.data)
-			console.log('connected to room', this.room.name)
+			if (!room) return
+			await room.connect(WEBSOCKET_URL, res.data)
+			console.log('connected to room', room.name)
 		}
 	}
 	async leaveRoom() {
-		this.room && this.room.disconnect()
+		const room = this.room
+		room && (await room.disconnect())
 	}
 	initEvent() {
-		this.room &&
-			this.room
+		const room = this.room
+		room &&
+			room
 				.on(RoomEvent.TrackSubscribed, this.handleTrackSubscribed)
 				.on(RoomEvent.TrackUnsubscribed, this.handleTrackUnsubscribed)
 				.on(RoomEvent.ActiveSpeakersChanged, this.handleActiveSpeakerChange)
@@ -75,20 +79,20 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 	async createTrack() {
 		// publish local camera and mic tracks
-		if (!this.room) return
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
 		const data = JSON.stringify({
 			userId: this.userId,
 			username: this.username,
 		})
-		this.room.localParticipant.setMetadata(data)
-		this.room.localParticipant.setName(this.username)
-		await this.room.localParticipant.setCameraEnabled(true)
-		await this.room.localParticipant.setMicrophoneEnabled(true)
+		localParticipant.setMetadata(data)
+		await localParticipant.setCameraEnabled(true)
+		await localParticipant.setMicrophoneEnabled(true)
 	}
 
 	handleTrackSubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
 		if (track.kind === Track.Kind.Video) {
-			// attach it to a new HTMLVideoElement or HTMLAudioElement
 			console.log('handleTrackSubscribed')
 			this.emit('remote', {
 				track,
