@@ -1,7 +1,7 @@
 <!--
  * @Author: Libra
  * @Date: 2023-05-26 13:49:57
- * @LastEditTime: 2023-06-19 14:10:09
+ * @LastEditTime: 2023-08-07 10:32:42
  * @LastEditors: Libra
  * @Description: 
 -->
@@ -11,9 +11,6 @@
 			<el-form ref="form" :model="formData" label-width="0">
 				<el-form-item>
 					<el-input v-model="formData.username" placeholder="请输入用户名"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-input v-model="formData.userId" placeholder="请输入用户ID"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-input v-model="formData.room" placeholder="请输入房间号"></el-input>
@@ -29,23 +26,25 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { v4 as uuidv4 } from 'uuid'
 
 const router = useRouter()
+const userId = uuidv4()
 
 const formData = reactive({
 	username: '',
-	userId: '',
 	room: '',
 })
 
 const login = () => {
-  console.log(formData)
-  router.push({
-    path: '/about',
-    query: {
-      username: formData.username,
-      roomname: formData.room,
-			userId: formData.userId,
-    },
-  })}
+	console.log(formData)
+	router.push({
+		path: '/about',
+		query: {
+			username: formData.username,
+			roomname: formData.room,
+			userId,
+		},
+	})
+}
 </script>
