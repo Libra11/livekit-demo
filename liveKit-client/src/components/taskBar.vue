@@ -15,6 +15,7 @@
 			:disabledClick="muteCamera"
 		/>
 		<drop-button
+			class="mx-3"
 			muteIcon="jingyin"
 			unmuteIcon="maikefeng2"
 			:devices="micList"
@@ -22,6 +23,7 @@
 			:enabledClick="unmuteMic"
 			:disabledClick="muteMic"
 		/>
+		<switch-button :value="screen" muteIcon="zhuanjiekefu-lixian" unmuteIcon="pingmu-screen" @switch="screenShare" />
 		<!-- </el-card> -->
 	</div>
 </template>
@@ -31,11 +33,13 @@ import { onMounted, ref } from 'vue'
 import DropButton from './DropButton.vue'
 import type LibraLiveKit from '@/livekit'
 import type { LocalTrack } from 'livekit-client'
+import SwitchButton from './SwitchButton.vue'
 
 const props = defineProps<{
 	llk: LibraLiveKit | null
 	videoTrack: LocalTrack | null
 	audioTrack: LocalTrack | null
+	screenTrack: LocalTrack | null
 }>()
 
 onMounted(async () => {
@@ -85,6 +89,22 @@ const switchCamera = async (device: MediaDeviceInfo) => {
 // switch mic
 const switchMic = async (device: MediaDeviceInfo) => {
 	await props.llk?.switchLocalDevice('audio', device.deviceId)
+}
+
+/**
+ * screen
+ */
+const screen = ref(false)
+const screenShare = async (value: boolean) => {
+	value ? await startScreenShare() : await stopScreenShare()
+	screen.value = value
+}
+const startScreenShare = async () => {
+	await props.llk?.createScreenTrack()
+}
+const stopScreenShare = async () => {
+	await props.llk?.stopScreenTrack()
+	await props.llk?.restartCameraTrack()
 }
 </script>
 

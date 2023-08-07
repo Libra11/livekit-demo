@@ -1,12 +1,13 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-08-07 15:57:15
+ * @LastEditTime: 2023-08-07 18:27:49
  * @LastEditors: Libra
  * @Description:
  */
 import {
 	LocalParticipant,
+	LocalTrack,
 	LocalTrackPublication,
 	Participant,
 	RemoteParticipant,
@@ -99,7 +100,6 @@ export default class LibraLiveKit extends EventEmitter {
 				.on(RoomEvent.ActiveSpeakersChanged, this.handleActiveSpeakerChange)
 				.on(RoomEvent.Disconnected, this.handleDisconnect)
 				.on(RoomEvent.LocalTrackPublished, this.handleLocalTrackPublished)
-				.on(RoomEvent.LocalTrackUnpublished, this.handleLocalTrackUnpublished)
 				.on(RoomEvent.TrackMuted, this.handleTrackMuted)
 				.on(RoomEvent.TrackUnmuted, this.handleTrackUnmuted)
 	}
@@ -115,6 +115,38 @@ export default class LibraLiveKit extends EventEmitter {
 		localParticipant.setMetadata(data)
 		await localParticipant.setCameraEnabled(true)
 		await localParticipant.setMicrophoneEnabled(true)
+	}
+
+	// restart camera track
+	async restartCameraTrack() {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.setCameraEnabled(true)
+	}
+
+	// create a screen share track
+	async createScreenTrack() {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.setScreenShareEnabled(true)
+	}
+
+	// stop screen share track
+	async stopScreenTrack() {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.setScreenShareEnabled(false)
+	}
+
+	// unpublish local camera and mic tracks
+	async unpublishTrack(track: LocalTrack) {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.unpublishTrack(track)
 	}
 
 	handleTrackSubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
@@ -139,10 +171,6 @@ export default class LibraLiveKit extends EventEmitter {
 			participant,
 			isVideo: track.track?.kind === Track.Kind.Video,
 		})
-	}
-
-	handleLocalTrackUnpublished = (track: LocalTrackPublication, participant: LocalParticipant) => {
-		track.track?.detach()
 	}
 
 	handleActiveSpeakerChange = (speakers: Participant[]) => {

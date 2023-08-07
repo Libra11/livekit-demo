@@ -1,7 +1,7 @@
 <!--
  * @Author: Libra
  * @Date: 2023-05-26 13:49:57
- * @LastEditTime: 2023-08-07 10:32:42
+ * @LastEditTime: 2023-08-07 18:29:03
  * @LastEditors: Libra
  * @Description: 
 -->
@@ -37,7 +37,6 @@ const formData = reactive({
 })
 
 const login = () => {
-	console.log(formData)
 	router.push({
 		path: '/about',
 		query: {

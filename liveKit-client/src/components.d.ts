@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SwitchButton: typeof import('./components/SwitchButton.vue')['default']
     TaskBar: typeof import('./components/taskBar.vue')['default']
     VideoContainer: typeof import('./components/VideoContainer.vue')['default']
     VideoItem: typeof import('./components/VideoItem.vue')['default']

@@ -11,7 +11,7 @@
 				<video-item :info="track" @click="moveItemToFirst(videos, index)"></video-item>
 			</div>
 		</div>
-		<task-bar :video-track="localVideoTrack" :audio-track="localAudioTrack" :llk="llk" v-if="llk" />
+		<task-bar :video-track="localVideoTrack" :audio-track="localAudioTrack" :screen-track="localScreenTrack" :llk="llk" v-if="llk" />
 		<div class="bar flex-c absolute top-[32%] left-2 z-10 mx-4 h-8 rounded-lg px-4 text-sm shadow-lg transition-all">
 			<span>正在说话:</span>
 			<span v-for="(item, index) in curSpeakers" :key="index">{{ item }}, </span>
@@ -41,6 +41,7 @@ let videos: Ref<Array<IVideo>> = ref([])
 let curSpeakers: Ref<Array<string>> = ref([])
 let localVideoTrack: Ref<LocalTrack | null> = ref(null)
 let localAudioTrack: Ref<LocalTrack | null> = ref(null)
+let localScreenTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
 const { roomname, username, userId: userid } = route.query
@@ -65,7 +66,12 @@ const createLibraLiveKit = () => {
 // llk listeners
 const LlkEvents = (llk: LibraLiveKit) => {
 	llk.on('local', (info: { track: LocalTrack; participant: LocalParticipant; isVideo: Boolean }) => {
-		info.isVideo ? (localVideoTrack.value = info.track) : (localAudioTrack.value = info.track)
+		if (info.isVideo) {
+			const target = info.track.source === 'screen_share' ? localScreenTrack : localVideoTrack
+			target.value = info.track
+		} else {
+			localAudioTrack.value = info.track
+		}
 		streamAddAndPlay(info.track, info.participant, info.isVideo)
 	})
 	llk.on('remote', async (info: { track: RemoteTrack; participant: RemoteParticipant; isVideo: Boolean }) => {
@@ -101,13 +107,13 @@ const LlkEvents = (llk: LibraLiveKit) => {
 // some one enter room, include myself
 const streamAddAndPlay = (track: Track, participant: Participant, isVideo: Boolean) => {
 	const { username, userId } = JSON.parse(participant.metadata!)
-	const user = videos.value.find((item) => item.userId === userId)
+	let user = videos.value.find((item) => item.userId === userId)
 	if (user) {
 		user[isVideo ? 'videoTrack' : 'audioTrack'] = track
 	} else {
 		videos.value.push({
 			username,
-			userId,
+			userId: userId,
 			videoTrack: isVideo ? track : null,
 			audioTrack: isVideo ? null : track,
 			isAudioMute: isVideo ? false : track.isMuted,

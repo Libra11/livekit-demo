@@ -1,7 +1,7 @@
 <!--
  * @Author: Libra
  * @Date: 2023-05-26 18:22:36
- * @LastEditTime: 2023-08-07 16:24:57
+ * @LastEditTime: 2023-08-07 17:43:45
  * @LastEditors: Libra
  * @Description: 
 -->
@@ -19,7 +19,7 @@
 			<span class="ml-1">{{ info.username }}</span>
 		</div>
 		<div class="absolute top-2 left-2 rounded-full bg-primary-color px-4 text-sm" v-else>本人</div>
-		<video class="w-full" :id="`v${info.userId.toString()}`" />
+		<video class="w-full" :id="info.userId" />
 	</el-card>
 </template>
 
@@ -50,9 +50,16 @@ watch(
 	}
 )
 
+watch(
+	() => props.info.audioTrack,
+	(newVal, oldVal) => {
+		newVal?.attach()
+	}
+)
+
 onMounted(() => {
 	const { userId, videoTrack, audioTrack } = props.info
-	ele = document.getElementById(`v${userId.toString()}`) as HTMLMediaElement
+	ele = document.getElementById(userId) as HTMLMediaElement
 	ele && videoTrack?.attach(ele)
 	audioTrack?.attach()
 })
