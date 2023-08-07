@@ -5,7 +5,7 @@
  * @Description: 
 -->
 <template>
-	<div class="relative">
+	<div>
 		<el-dropdown @command="handleCommand" split-button>
 			<i class="iconfont" :class="`icon-${icon}`" @click="toggleMute"></i>
 			<template #dropdown>
@@ -25,29 +25,30 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { Select } from '@element-plus/icons-vue'
-import { de } from 'element-plus/es/locale'
+
 const props = defineProps<{
 	devices: MediaDeviceInfo[]
 	muteIcon: string
 	unmuteIcon: string
-	muteClick: () => void
-	unmuteClick: () => void
-	switchDevice: (device: MediaDeviceInfo) => void
+	enabledClick: () => Promise<void>
+	disabledClick: () => Promise<void>
+	switchDevice: (device: MediaDeviceInfo) => Promise<void>
 }>()
 
 const selectedDevice = ref(0)
-const muted = ref(false)
+const isMuted = ref(false)
 const icon = computed(() => {
-	return muted.value ? props.muteIcon : props.unmuteIcon
+	return isMuted.value ? props.muteIcon : props.unmuteIcon
 })
 
 const toggleMute = () => {
-	muted.value = !muted.value
-	muted.value ? props.muteClick() : props.unmuteClick()
+	isMuted.value = !isMuted.value
+	isMuted.value ? props.disabledClick() : props.enabledClick()
 }
 
 const handleCommand = (index: number) => {
 	const { switchDevice, devices } = props
+	selectedDevice.value = index
 	switchDevice(devices[index])
 }
 </script>

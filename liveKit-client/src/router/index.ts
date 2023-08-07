@@ -7,7 +7,7 @@
  */
 import whiteList from '@/utils/whiteList'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { useToken } from '@/composables/useToken'
+import { useToken } from '@/composables/useVar'
 
 const routes: Array<RouteRecordRaw> = [
 	{

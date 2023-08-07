@@ -8,36 +8,10 @@
 	<div class="h-full w-full">
 		<div id="room" class="speech h-full w-full" v-if="videos.length">
 			<div class="grid-box-item" v-for="(track, index) in videos" :key="track.userId">
-				<video-item
-					:id="track.userId"
-					:username="track.username"
-					:track="track.track"
-					@click="moveItemToFirst(videos, index)"
-					:isMe="track.isMe"
-				></video-item>
-			</div>
-			<div class="bar absolute bottom-6 z-10 mx-4 h-14 w-0 rounded-lg shadow-lg transition-all">
-				<!-- will replace use taskBar.vue components -->
-				<el-card class="h-full w-72">
-					<drop-button
-						muteIcon="shexiangtou_guanbi"
-						unmuteIcon="shexiangtou"
-						:muteClick="muteCamera"
-						:unmuteClick="unMuteCamera"
-						:devices="cameraList"
-						:switchDevice="switchCamera"
-					/>
-					<drop-button
-						muteIcon="shexiangtou_guanbi"
-						unmuteIcon="shexiangtou"
-						:muteClick="muteCamera"
-						:unmuteClick="unMuteCamera"
-						:devices="cameraList"
-						:switchDevice="switchCamera"
-					/>
-				</el-card>
+				<video-item :info="track" @click="moveItemToFirst(videos, index)"></video-item>
 			</div>
 		</div>
+		<task-bar :video-track="localVideoTrack" :audio-track="localAudioTrack" :llk="llk" v-if="llk" />
 		<div class="bar flex-c absolute top-[32%] left-2 z-10 mx-4 h-8 rounded-lg px-4 text-sm shadow-lg transition-all">
 			<span>正在说话:</span>
 			<span v-for="(item, index) in curSpeakers" :key="index">{{ item }}, </span>
@@ -47,49 +21,55 @@
 
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import type { LocalParticipant, LocalTrack, LocalVideoTrack, Participant, RemoteParticipant, RemoteTrack, Track } from 'livekit-client'
+import type { LocalParticipant, LocalTrack, Participant, RemoteParticipant, RemoteTrack, Track, TrackPublication } from 'livekit-client'
 import { useRoute } from 'vue-router'
 import LibraLiveKit from '@/livekit'
 import VideoItem from '@/components/VideoItem.vue'
-import DropButton from './DropButton.vue'
+import { LlkStore } from '@/store/modules/llk'
 
 interface IVideo {
-	track: Track
+	videoTrack: Track | null
+	audioTrack: Track | null
+	isAudioMute: boolean
+	isVideoMute: boolean
 	username: string
 	userId: string
 	isMe: boolean
 }
-let llk: LibraLiveKit | null = null
+let llk: Ref<LibraLiveKit | null> = ref(null)
 let videos: Ref<Array<IVideo>> = ref([])
 let curSpeakers: Ref<Array<string>> = ref([])
-let localVideoTrack: LocalTrack | null = null
+let localVideoTrack: Ref<LocalTrack | null> = ref(null)
+let localAudioTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
-const { roomname, username, userId } = route.query
+const { roomname, username, userId: userid } = route.query
 onMounted(async () => {
 	LlkEvents(createLibraLiveKit())
-	await getDevices()
 })
 
 // create LibraLiveKit instance
 const createLibraLiveKit = () => {
-	llk = new LibraLiveKit({
+	llk.value = new LibraLiveKit({
 		username: username as string,
 		roomname: roomname as string,
-		userId: userId as string,
+		userId: userid as string,
 	})
-	llk.init()
-	return llk
+	llk.value.init()
+	// store ll
+	const llkStore = LlkStore()
+	llkStore.setLlk(llk.value)
+	return llk.value
 }
 
 // llk listeners
 const LlkEvents = (llk: LibraLiveKit) => {
-	llk.on('local', (info: { track: LocalTrack; participant: LocalParticipant }) => {
-		localVideoTrack = info.track
-		streamAddAndPlay(info.track, info.participant)
+	llk.on('local', (info: { track: LocalTrack; participant: LocalParticipant; isVideo: Boolean }) => {
+		info.isVideo ? (localVideoTrack.value = info.track) : (localAudioTrack.value = info.track)
+		streamAddAndPlay(info.track, info.participant, info.isVideo)
 	})
-	llk.on('remote', async (info: { track: RemoteTrack; participant: RemoteParticipant }) => {
-		await streamAddAndPlay(info.track, info.participant)
+	llk.on('remote', async (info: { track: RemoteTrack; participant: RemoteParticipant; isVideo: Boolean }) => {
+		streamAddAndPlay(info.track, info.participant, info.isVideo)
 	})
 	llk.on('quit', (participant: RemoteParticipant) => {
 		const metadata = JSON.parse(participant.metadata!)
@@ -102,62 +82,47 @@ const LlkEvents = (llk: LibraLiveKit) => {
 			curSpeakers.value = []
 		}, 2000)
 	})
+	llk.on('mute', (publication: TrackPublication, participant: Participant) => {
+		const { userId } = JSON.parse(participant.metadata!)
+		const user = videos.value.find((item) => item.userId === userId)
+		if (user) {
+			user[publication.kind === 'video' ? 'isVideoMute' : 'isAudioMute'] = true
+		}
+	})
+	llk.on('unmute', (publication: TrackPublication, participant: Participant) => {
+		const { userId } = JSON.parse(participant.metadata!)
+		const user = videos.value.find((item) => item.userId === userId)
+		if (user) {
+			user[publication.kind === 'video' ? 'isVideoMute' : 'isAudioMute'] = false
+		}
+	})
 }
 
 // some one enter room, include myself
-const streamAddAndPlay = (track: Track, participant: Participant) => {
-	const { username, userId: Id } = JSON.parse(participant.metadata!)
-	videos.value.push({
-		username,
-		userId: Id,
-		track,
-		isMe: Id === userId,
-	})
+const streamAddAndPlay = (track: Track, participant: Participant, isVideo: Boolean) => {
+	const { username, userId } = JSON.parse(participant.metadata!)
+	const user = videos.value.find((item) => item.userId === userId)
+	if (user) {
+		user[isVideo ? 'videoTrack' : 'audioTrack'] = track
+	} else {
+		videos.value.push({
+			username,
+			userId,
+			videoTrack: isVideo ? track : null,
+			audioTrack: isVideo ? null : track,
+			isAudioMute: isVideo ? false : track.isMuted,
+			isVideoMute: isVideo ? track.isMuted : false,
+			isMe: userid === userId,
+		})
+	}
 }
+
+// update mute status
 
 // move item to first
 const moveItemToFirst = (arr: Array<IVideo>, index: number) => {
 	const item = arr.splice(index, 1)
 	arr.unshift(item[0])
-}
-
-const muteCamera = () => {
-	localVideoTrack?.mute()
-}
-const unMuteCamera = () => {
-	localVideoTrack?.unmute()
-}
-
-/**
- * devices
- */
-const cameraList = ref<Array<MediaDeviceInfo>>([])
-const micList = ref<Array<MediaDeviceInfo>>([])
-
-// get devices
-const getDevices = async () => {
-	await getCameraDevices()
-	await getMicDevices()
-}
-
-const getCameraDevices = async () => {
-	const devices = await llk?.getLocalDevices('video')
-	if (!devices) return
-	cameraList.value = devices
-}
-
-const getMicDevices = async () => {
-	const devices = await llk?.getLocalDevices('audio')
-	if (!devices) return
-	micList.value = devices
-}
-// switch camera
-const switchCamera = async (device: MediaDeviceInfo) => {
-	await llk?.switchLocalDevice('video', device.deviceId)
-	if (!localVideoTrack) return
-	await (localVideoTrack as LocalVideoTrack).restartTrack()
-	// const ele = document.querySelector(`#v${userId}`) as HTMLVideoElement
-	// ele.srcObject = localVideoTrack.mediaStream!
 }
 </script>
 

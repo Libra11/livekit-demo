@@ -1,7 +1,7 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-08-04 15:51:10
+ * @LastEditTime: 2023-08-07 15:57:15
  * @LastEditors: Libra
  * @Description:
  */
@@ -15,6 +15,7 @@ import {
 	Room,
 	RoomEvent,
 	Track,
+	TrackPublication,
 	VideoPresets,
 } from 'livekit-client'
 import { EventEmitter } from 'events'
@@ -99,6 +100,8 @@ export default class LibraLiveKit extends EventEmitter {
 				.on(RoomEvent.Disconnected, this.handleDisconnect)
 				.on(RoomEvent.LocalTrackPublished, this.handleLocalTrackPublished)
 				.on(RoomEvent.LocalTrackUnpublished, this.handleLocalTrackUnpublished)
+				.on(RoomEvent.TrackMuted, this.handleTrackMuted)
+				.on(RoomEvent.TrackUnmuted, this.handleTrackUnmuted)
 	}
 	async createTrack() {
 		// publish local camera and mic tracks
@@ -115,16 +118,11 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	handleTrackSubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-		if (track.kind === Track.Kind.Video) {
-			console.log('handleTrackSubscribed')
-			this.emit('remote', {
-				track,
-				participant,
-			})
-		}
-		if (track.kind === Track.Kind.Audio) {
-			// track.attach()
-		}
+		this.emit('remote', {
+			track,
+			participant,
+			isVideo: track.kind === Track.Kind.Video,
+		})
 	}
 
 	handleTrackUnsubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
@@ -135,17 +133,12 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	handleLocalTrackPublished = (track: LocalTrackPublication, participant: LocalParticipant) => {
-		if (track.track?.kind === Track.Kind.Video) {
-			// attach it to a new HTMLVideoElement or HTMLAudioElement
-			console.log('handleTrackSubscribed')
-			this.emit('local', {
-				track: track.track,
-				participant,
-			})
-		}
-		if (track.track?.kind === Track.Kind.Audio) {
-			track.track?.attach()
-		}
+		console.log('handleTrackSubscribed')
+		this.emit('local', {
+			track: track.track,
+			participant,
+			isVideo: track.track?.kind === Track.Kind.Video,
+		})
 	}
 
 	handleLocalTrackUnpublished = (track: LocalTrackPublication, participant: LocalParticipant) => {
@@ -159,5 +152,15 @@ export default class LibraLiveKit extends EventEmitter {
 
 	handleDisconnect() {
 		console.log('disconnected from room')
+	}
+
+	handleTrackMuted = (publication: TrackPublication, participant: Participant) => {
+		this.emit('mute', publication, participant)
+		console.log('handleTrackMuted', publication, participant)
+	}
+
+	handleTrackUnmuted = (publication: TrackPublication, participant: Participant) => {
+		this.emit('unmute', publication, participant)
+		console.log('handleTrackUnmuted', publication, participant)
 	}
 }

@@ -6,7 +6,7 @@
  * @Description: fetch 封装
  */
 import { base } from '@/api/config'
-import { useToken } from '@/composables/useToken'
+import { useToken } from '@/composables/useVar'
 import { handleCode } from './code'
 
 export type ResponseData<T> = {
