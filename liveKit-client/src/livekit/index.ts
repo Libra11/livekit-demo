@@ -1,11 +1,12 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-08-07 18:27:49
+ * @LastEditTime: 2023-08-10 14:13:23
  * @LastEditors: Libra
  * @Description:
  */
 import {
+	DataPacket_Kind,
 	LocalParticipant,
 	LocalTrack,
 	LocalTrackPublication,
@@ -91,6 +92,17 @@ export default class LibraLiveKit extends EventEmitter {
 				break
 		}
 	}
+	// send message
+	sendMessage(message: string) {
+		const room = this.room
+		if (!room) return
+		const strData = JSON.stringify(message)
+		const encoder = new TextEncoder()
+		// publishData takes in a Uint8Array, so we need to convert it
+		const data = encoder.encode(strData)
+		// publish lossy data to the entire room
+		room.localParticipant.publishData(data, DataPacket_Kind.LOSSY)
+	}
 	initEvent() {
 		const room = this.room
 		room &&
@@ -102,6 +114,7 @@ export default class LibraLiveKit extends EventEmitter {
 				.on(RoomEvent.LocalTrackPublished, this.handleLocalTrackPublished)
 				.on(RoomEvent.TrackMuted, this.handleTrackMuted)
 				.on(RoomEvent.TrackUnmuted, this.handleTrackUnmuted)
+				.on(RoomEvent.DataReceived, this.handleMessageReceived)
 	}
 	async createTrack() {
 		// publish local camera and mic tracks
@@ -190,5 +203,12 @@ export default class LibraLiveKit extends EventEmitter {
 	handleTrackUnmuted = (publication: TrackPublication, participant: Participant) => {
 		this.emit('unmute', publication, participant)
 		console.log('handleTrackUnmuted', publication, participant)
+	}
+
+	handleMessageReceived = (data: Uint8Array, participant?: RemoteParticipant, kind?: DataPacket_Kind, topic?: any) => {
+		const decoder = new TextDecoder()
+		const message = decoder.decode(data)
+		this.emit('message', message, participant)
+		console.log('handleMessageReceived', message, participant)
 	}
 }

@@ -26,6 +26,7 @@ import { useRoute } from 'vue-router'
 import LibraLiveKit from '@/livekit'
 import VideoItem from '@/components/VideoItem.vue'
 import { LlkStore } from '@/store/modules/llk'
+import { UserStore } from '@/store/modules/user'
 
 interface IVideo {
 	videoTrack: Track | null
@@ -36,7 +37,7 @@ interface IVideo {
 	userId: string
 	isMe: boolean
 }
-let llk: Ref<LibraLiveKit | null> = ref(null)
+let llk: LibraLiveKit | null = null
 let videos: Ref<Array<IVideo>> = ref([])
 let curSpeakers: Ref<Array<string>> = ref([])
 let localVideoTrack: Ref<LocalTrack | null> = ref(null)
@@ -45,22 +46,24 @@ let localScreenTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
 const { roomname, username, userId: userid } = route.query
+const userStore = UserStore()
+userStore.setUserName(username as string)
 onMounted(async () => {
 	LlkEvents(createLibraLiveKit())
 })
 
 // create LibraLiveKit instance
 const createLibraLiveKit = () => {
-	llk.value = new LibraLiveKit({
+	llk = new LibraLiveKit({
 		username: username as string,
 		roomname: roomname as string,
 		userId: userid as string,
 	})
-	llk.value.init()
+	llk.init()
 	// store ll
 	const llkStore = LlkStore()
-	llkStore.setLlk(llk.value)
-	return llk.value
+	llkStore.setLlk(llk)
+	return llk
 }
 
 // llk listeners

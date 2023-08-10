@@ -5,16 +5,15 @@
  * @Description: 
 -->
 <template>
-	<el-button @click="toggle">
-		<i class="iconfont" :class="`icon-${value ? muteIcon : unmuteIcon}`"></i>
-	</el-button>
+	<div @click="toggle" :class="`${props.value ? 'bg-blue-400': ''}`" class="rounded-full w-8 h-8 flex items-center justify-center cursor-pointer">
+		<i class="iconfont" :class="`icon-${icon}`"></i>
+	</div>
 </template>
 
 <script lang="ts" setup>
 interface Props {
 	value: boolean
-	unmuteIcon: string
-	muteIcon: string
+	icon: string
 }
 
 const props = defineProps<Props>()

@@ -23,7 +23,8 @@
 			:enabledClick="unmuteMic"
 			:disabledClick="muteMic"
 		/>
-		<switch-button :value="screen" muteIcon="zhuanjiekefu-lixian" unmuteIcon="pingmu-screen" @switch="screenShare" />
+		<switch-button :value="screen" icon="pingmu-screen" @switch="screenShare" />
+		<switch-button :value="message" icon="message" @switch="showMessage" />
 		<!-- </el-card> -->
 	</div>
 </template>
@@ -34,6 +35,7 @@ import DropButton from './DropButton.vue'
 import type LibraLiveKit from '@/livekit'
 import type { LocalTrack } from 'livekit-client'
 import SwitchButton from './SwitchButton.vue'
+import emitter from '@/utils/mitt'
 
 const props = defineProps<{
 	llk: LibraLiveKit | null
@@ -105,6 +107,15 @@ const startScreenShare = async () => {
 const stopScreenShare = async () => {
 	await props.llk?.stopScreenTrack()
 	await props.llk?.restartCameraTrack()
+}
+
+/**
+ * message
+ */
+const message = ref(false)
+const showMessage = (value: boolean) => {
+  message.value = value
+  emitter.emit('showMessage', value)
 }
 </script>
 
