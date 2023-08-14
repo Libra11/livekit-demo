@@ -4,6 +4,6 @@
  * @LastEditors: Libra
  * @Description:
  */
-const WEBSOCKET_URL = 'ws://127.0.0.1:7880'
+const WEBSOCKET_URL = process.env.NODE_ENV === 'production' ? 'wss://livekit.jusbin.cn' : 'ws://127.0.0.1:7880'
 
 export { WEBSOCKET_URL }

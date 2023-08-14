@@ -15,6 +15,7 @@
 	},
 	"scripts": {
 		"dev": "vite",
+		"prod": "export NODE_ENV=production && vite",
 		"build": "run-p type-check build-only",
 		"preview": "vite preview",
 		"test:no-watch": "vitest --no-watch",
@@ -53,6 +54,7 @@
 		"commitlint-config-cz": "^0.13.3",
 		"concurrently": "^7.6.0",
 		"cross-env": "^7.0.3",
+		"cssnano": "^6.0.1",
 		"cypress": "^12.7.0",
 		"cz-conventional-changelog": "^3.3.0",
 		"cz-customizable": "^7.0.0",

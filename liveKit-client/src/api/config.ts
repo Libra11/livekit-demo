@@ -8,7 +8,7 @@
 
 const dev_url: string = 'http://127.0.0.1:3000/api'
 
-const exam_prod_url: string = 'https://exam-api.iguokao.com/'
+const exam_prod_url: string = 'https://livekit-api.jusbin.cn/api'
 let base: string = ''
 switch (process.env.NODE_ENV) {
 	case 'development':
