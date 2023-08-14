@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"livekit-client": "^1.9.6",
+		"mitt": "^3.0.1",
 		"pinia": "^2.0.33",
 		"uuid": "^9.0.0",
 		"vue": "^3.2.47",
