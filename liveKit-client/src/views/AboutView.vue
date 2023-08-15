@@ -1,7 +1,7 @@
 <!--
  * @Author: Libra
  * @Date: 2023-03-07 14:15:32
- * @LastEditTime: 2023-08-10 14:30:56
+ * @LastEditTime: 2023-08-15 16:55:28
  * @LastEditors: Libra
  * @Description: 
 -->
@@ -24,7 +24,7 @@ const message = ref(false)
 onMounted(() => {
 	emitter.on('showMessage', (value: boolean) => {
 		message.value = value
-	});
+	})
 })
 onBeforeUnmount(() => {
 	emitter.off('showMessage')

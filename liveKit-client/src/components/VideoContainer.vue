@@ -7,9 +7,9 @@
 <template>
 	<div class="h-full w-full">
 		<div id="room" class="speech h-full w-full" v-if="videos.length">
-			<div class="grid-box-item" v-for="(track, index) in videos" :key="track.userId">
-				<video-item :info="track" @click="moveItemToFirst(videos, index)"></video-item>
-			</div>
+			<grid-layout>
+				<video-item v-for="(track, index) in videos" :key="track.userId" :info="track" @click="moveItemToFirst(videos, index)"></video-item>
+			</grid-layout>
 		</div>
 		<task-bar :video-track="localVideoTrack" :audio-track="localAudioTrack" :screen-track="localScreenTrack" :llk="llk" v-if="llk" />
 		<div class="bar flex-c absolute top-[32%] left-2 z-10 mx-4 h-8 rounded-lg px-4 text-sm shadow-lg transition-all">
@@ -20,13 +20,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import type { LocalParticipant, LocalTrack, Participant, RemoteParticipant, RemoteTrack, Track, TrackPublication } from 'livekit-client'
 import { useRoute } from 'vue-router'
 import LibraLiveKit from '@/livekit'
 import VideoItem from '@/components/VideoItem.vue'
+import GridLayout from './GridLayout.vue'
 import { LlkStore } from '@/store/modules/llk'
 import { UserStore } from '@/store/modules/user'
+import emitter from '@/utils/mitt'
 
 interface IVideo {
 	videoTrack: Track | null
@@ -133,6 +135,38 @@ const moveItemToFirst = (arr: Array<IVideo>, index: number) => {
 	const item = arr.splice(index, 1)
 	arr.unshift(item[0])
 }
+
+/**
+ * layout control
+ */
+watch(
+	()=> videos.value.length,
+	() => {
+		const layout = userStore.getLayout
+		if (layout === 'EquallyDivided') {
+			emitter.emit('equallyDivided', getEquallyDividedClass())
+		}
+	}
+)
+watch(
+	() => userStore.getLayout,
+	() => {
+		const layout = userStore.getLayout
+		if (layout === 'EquallyDivided') {
+			emitter.emit('equallyDivided', getEquallyDividedClass())
+		}
+	}
+)
+const getEquallyDividedClass = () => {
+  const length = videos.value.length;
+  return length === 1 ? "grid-one-one"
+    : length === 2 ? "grid-one-two"
+    : length === 3 ? "header-foot-foot"
+    : length === 4 ? "grid-two-two"
+    : length >= 5 && length <= 6 ? "grid-two-three"
+    : length >= 7 && length <= 9 ? "grid-three-three"
+    : "grid-three-four";
+};
 </script>
 
 <style lang="scss" scoped>
@@ -144,20 +178,6 @@ const moveItemToFirst = (arr: Array<IVideo>, index: number) => {
 	padding: 0 !important;
 	width: 100%;
 	height: 100%;
-}
-.speech {
-	display: grid;
-	grid-template-rows: repeat(4, 25%);
-	grid-template-columns: unset;
-	grid-auto-columns: 25%;
-	overflow: auto;
-	.grid-box-item {
-		padding: 0.25rem;
-	}
-	.grid-box-item:nth-child(1) {
-		grid-row: 2 / 5;
-		grid-column: 1 / 5;
-	}
 }
 .bar {
 	left: calc(50% - 27rem);
