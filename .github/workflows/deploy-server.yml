@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - "liveKit-server/**"
+      - ".github/workflows/deploy-server.yml"
 
 env:
   LIVEKIT_API_KEY: ${{secrets.LIVEKIT_API_KEY}}
@@ -25,6 +26,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          allenvs: ture
+          allenvs: true
           script: |
             cd /home/${{secrets.USERNAME}}/livekit-demo/liveKit-server && git reset --hard && git pull && yarn && yarn start

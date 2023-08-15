@@ -4,6 +4,7 @@ on:
     branches: ["main"]
     paths:
       - "liveKit-client/**"
+      - ".github/workflows/deploy-client.yml"
 
 env:
   NODE_VERSION: "16.x" # set this to the node version to use
