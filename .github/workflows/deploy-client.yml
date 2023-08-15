@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: "18.x" # set this to the node version to use
-  DIRECTORY: "liveKit-client"
+  DIRECTORY: liveKit-client
 
 permissions:
   contents: read
@@ -16,6 +16,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./${{ env.DIRECTORY }}/
     steps:
       - uses: actions/checkout@v3
 
@@ -24,18 +27,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
+          cache-dependency-path: './${{ env.DIRECTORY }}/package-lock.json'
 
       - name: yarn install
         run: |
           npm install -D typescript
           yarn
-        working-directory: ${{ env.DIRECTORY }}
 
       - name: yarn build
         run: |
           export NODE_ENV=production
           yarn build-only
-        working-directory: ${{ env.DIRECTORY }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
