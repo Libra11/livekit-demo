@@ -18,7 +18,9 @@ export default function createToken(
 ) {
   const { identity, roomName: room } = ctx.request.query;
   console.log("identity", identity, room);
-  const token = new AccessToken("devkey", "secret", {
+  const apiKey = process.env.LIVEKIT_API_KEY || "devkey";
+  const apiSecret = process.env.LIVEKIT_API_SECRET || "secret";
+  const token = new AccessToken(apiKey, apiSecret, {
     identity: identity as string,
   });
   token.addGrant({

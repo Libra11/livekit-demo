@@ -1,0 +1,30 @@
+name: deploy server
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "liveKit-server/**"
+
+env:
+  LIVEKIT_API_KEY: ${{secrets.LIVEKIT_API_KEY}}
+  LIVEKIT_API_SECRET: ${{secrets.LIVEKIT_API_SECRET}}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          allenvs: ture
+          script: |
+            cd /home/${{secrets.USERNAME}}/livekit-demo/liveKit-server && git reset --hard && git pull && yarn && yarn start
