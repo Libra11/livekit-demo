@@ -29,7 +29,7 @@ jobs:
         run: |
           npm install -D typescript
           yarn
-          yarn build
+          yarn build-only
         working-directory: ${{ env.DIRECTORY }}
 
       - name: Upload artifact for deployment job
@@ -43,6 +43,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    needs: build
     name: Publish to Cloudflare Pages
     steps:
       - name: Download artifact from build job
