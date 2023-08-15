@@ -28,4 +28,4 @@ jobs:
           port: ${{ secrets.PORT }}
           allenvs: true
           script: |
-            cd /home/${{secrets.USERNAME}}/livekit-demo/liveKit-server && git reset --hard && git pull && yarn && yarn start
+            cd /home/${{secrets.USERNAME}}/livekit-demo/liveKit-server && git reset --hard && git pull && yarn && pm2 start yarn -- start
