@@ -7,6 +7,7 @@
  */
 import {
 	DataPacket_Kind,
+	ExternalE2EEKeyProvider,
 	LocalParticipant,
 	LocalTrack,
 	LocalTrackPublication,
@@ -23,6 +24,7 @@ import {
 import { EventEmitter } from 'events'
 import { getToken } from '@/api/token'
 import { WEBSOCKET_URL } from '@/config/config'
+import E2EEWorker from '../e2ee/worker/e2ee.worker?worker'
 
 interface IInit {
 	userId: string
@@ -48,13 +50,22 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	async createRoom() {
+		const keyProvider = new ExternalE2EEKeyProvider()
+		const cryptoKey = 'password'
+		keyProvider.setKey(cryptoKey)
+
 		this.room = new Room({
 			adaptiveStream: true,
 			dynacast: true,
 			videoCaptureDefaults: {
 				resolution: VideoPresets.h720.resolution,
 			},
+			e2ee: {
+				keyProvider,
+				worker: new E2EEWorker(),
+			},
 		})
+		await this.room.setE2EEEnabled(true)
 	}
 	async joinRoom() {
 		const res = await getToken(this.userId, this.roomname)
