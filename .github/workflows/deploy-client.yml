@@ -8,8 +8,7 @@ on:
 
 env:
   NODE_VERSION: "18.x" # set this to the node version to use
-  NODE_ENV: "production"
-  DIRECTORY: "liveKit-client"
+  DIRECTORY: liveKit-client
 
 permissions:
   contents: read
@@ -17,6 +16,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./${{ env.DIRECTORY }}/
     steps:
       - uses: actions/checkout@v3
 
@@ -25,13 +27,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "yarn"
+          cache-dependency-path: '${{ env.DIRECTORY }}/yarn.lock'
 
-      - name: yarn build
+      - name: yarn install
         run: |
           npm install -D typescript
           yarn
+
+      - name: yarn build
+        run: |
+          export NODE_ENV=production
           yarn build-only
-        working-directory: ${{ env.DIRECTORY }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -59,7 +65,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 8037fd37fc7a665dfeee4347a23fc913
-          projectName: ${{ env.DIRECTORY }}
+          projectName: livekit-client
           directory: .
           # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
           wranglerVersion: "3"

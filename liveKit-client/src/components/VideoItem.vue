@@ -1,12 +1,12 @@
 <!--
  * @Author: Libra
  * @Date: 2023-05-26 18:22:36
- * @LastEditTime: 2023-08-07 17:43:45
+ * @LastEditTime: 2023-08-15 17:40:15
  * @LastEditors: Libra
  * @Description: 
 -->
 <template>
-	<el-card class="relative h-full w-full cursor-pointer">
+	<el-card class="grid-box-item relative h-full w-full cursor-pointer">
 		<div class="flex-c absolute top-2 left-2 rounded-full bg-[rgba(255,255,255,0.5)] px-2 text-sm text-slate-700 backdrop-blur-sm" v-if="!info.isMe">
 			<div>
 				<i class="iconfont icon-jingyin text-primary-color" v-if="info.isAudioMute"></i>
@@ -75,6 +75,5 @@ onBeforeMount(() => {
 video {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
 }
 </style>

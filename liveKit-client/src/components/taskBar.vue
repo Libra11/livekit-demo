@@ -23,6 +23,18 @@
 			:enabledClick="unmuteMic"
 			:disabledClick="muteMic"
 		/>
+		<el-dropdown @command="changeLayout">
+      <el-button>
+        <i class="iconfont icon-bujufangshi"></i>
+      </el-button>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item command="EquallyDivided">等分</el-dropdown-item>
+          <el-dropdown-item command="MainAndAside">右侧</el-dropdown-item>
+          <el-dropdown-item command="MainAndTop">顶部</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
 		<switch-button :value="screen" icon="pingmu-screen" @switch="screenShare" />
 		<switch-button :value="message" icon="message" @switch="showMessage" />
 		<!-- </el-card> -->
@@ -116,6 +128,14 @@ const message = ref(false)
 const showMessage = (value: boolean) => {
   message.value = value
   emitter.emit('showMessage', value)
+}
+
+/**
+ * layout
+ */
+const changeLayout = (command: string) => {
+	console.log(command)
+	emitter.emit('changeLayout', command)
 }
 </script>
 
