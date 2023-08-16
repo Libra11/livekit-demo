@@ -20,6 +20,7 @@ import {
 	Track,
 	TrackPublication,
 	VideoPresets,
+	type E2EEOptions,
 } from 'livekit-client'
 import { EventEmitter } from 'events'
 import { getToken } from '@/api/token'
@@ -50,6 +51,7 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	async createRoom() {
+		const e2eeEnabled = false
 		const keyProvider = new ExternalE2EEKeyProvider()
 		const cryptoKey = 'password'
 		keyProvider.setKey(cryptoKey)
@@ -60,12 +62,11 @@ export default class LibraLiveKit extends EventEmitter {
 			videoCaptureDefaults: {
 				resolution: VideoPresets.h720.resolution,
 			},
-			e2ee: {
-				keyProvider,
-				worker: new E2EEWorker(),
-			},
+			e2ee: e2eeEnabled ? { keyProvider, worker: new E2EEWorker() } : undefined,
 		})
-		await this.room.setE2EEEnabled(true)
+		if (e2eeEnabled) {
+			await this.room.setE2EEEnabled(true)
+		}
 	}
 	async joinRoom() {
 		const res = await getToken(this.userId, this.roomname)

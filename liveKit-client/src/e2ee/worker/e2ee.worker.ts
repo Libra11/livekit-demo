@@ -1,18 +1,11 @@
 // import * as log from 'loglevel'
 import { workerLogger } from './logger'
 
-import { KEY_PROVIDER_DEFAULTS } from 'livekit-client/src/e2ee/constants'
-import { CryptorErrorReason } from 'livekit-client/src/e2ee/errors'
-import type {
-	E2EEWorkerMessage,
-	EnableMessage,
-	ErrorMessage,
-	KeyProviderOptions,
-	RatchetMessage,
-	RatchetRequestMessage,
-} from 'livekit-client/src/e2ee/types'
-import { FrameCryptor } from 'livekit-client/src/e2ee/worker/FrameCryptor'
-import { ParticipantKeyHandler } from 'livekit-client/src/e2ee/worker/ParticipantKeyHandler'
+import { KEY_PROVIDER_DEFAULTS } from '../constants'
+import { CryptorErrorReason } from '../errors'
+import type { E2EEWorkerMessage, EnableMessage, ErrorMessage, KeyProviderOptions, RatchetMessage, RatchetRequestMessage } from 'livekit-client'
+import { FrameCryptor } from './FrameCryptor'
+import { ParticipantKeyHandler } from './ParticipantKeyHandler'
 
 const participantCryptors: FrameCryptor[] = []
 const participantKeys: Map<string, ParticipantKeyHandler> = new Map()
