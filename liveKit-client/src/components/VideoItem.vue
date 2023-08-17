@@ -1,7 +1,7 @@
 <!--
  * @Author: Libra
  * @Date: 2023-05-26 18:22:36
- * @LastEditTime: 2023-08-15 17:40:15
+ * @LastEditTime: 2023-08-17 15:08:27
  * @LastEditors: Libra
  * @Description: 
 -->
@@ -33,6 +33,7 @@ interface Info {
 	isMe: boolean
 	isAudioMute: boolean
 	isVideoMute: boolean
+	screenTrack: Track | null
 	videoTrack: Track | null
 	audioTrack: Track | null
 }
@@ -51,6 +52,13 @@ watch(
 )
 
 watch(
+	() => props.info.screenTrack,
+	(newVal, oldVal) => {
+		ele && newVal?.attach(ele)
+	}
+)
+
+watch(
 	() => props.info.audioTrack,
 	(newVal, oldVal) => {
 		newVal?.attach()
@@ -58,15 +66,17 @@ watch(
 )
 
 onMounted(() => {
-	const { userId, videoTrack, audioTrack } = props.info
+	const { userId, screenTrack, videoTrack, audioTrack } = props.info
 	ele = document.getElementById(userId) as HTMLMediaElement
 	ele && videoTrack?.attach(ele)
+	ele && screenTrack?.attach(ele)
 	audioTrack?.attach()
 })
 
 onBeforeMount(() => {
-	const { videoTrack, audioTrack } = props.info
+	const { screenTrack, videoTrack, audioTrack } = props.info
 	ele && videoTrack?.detach(ele)
+	ele && screenTrack?.detach(ele)
 	audioTrack?.detach()
 })
 </script>

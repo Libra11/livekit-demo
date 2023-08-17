@@ -1,7 +1,7 @@
 /*
  * @Author: Libra
  * @Date: 2023-05-26 16:52:33
- * @LastEditTime: 2023-08-10 14:13:23
+ * @LastEditTime: 2023-08-17 15:15:12
  * @LastEditors: Libra
  * @Description:
  */
@@ -112,6 +112,7 @@ export default class LibraLiveKit extends EventEmitter {
 				.on(RoomEvent.ActiveSpeakersChanged, this.handleActiveSpeakerChange)
 				.on(RoomEvent.Disconnected, this.handleDisconnect)
 				.on(RoomEvent.LocalTrackPublished, this.handleLocalTrackPublished)
+				.on(RoomEvent.LocalTrackUnpublished, this.handleLocalTrackUnPublished)
 				.on(RoomEvent.TrackMuted, this.handleTrackMuted)
 				.on(RoomEvent.TrackUnmuted, this.handleTrackUnmuted)
 				.on(RoomEvent.DataReceived, this.handleMessageReceived)
@@ -130,12 +131,20 @@ export default class LibraLiveKit extends EventEmitter {
 		await localParticipant.setMicrophoneEnabled(true)
 	}
 
-	// restart camera track
-	async restartCameraTrack() {
+	// create a camera track
+	async createCameraTrack() {
 		const room = this.room
 		if (!room) return
 		const { localParticipant } = room
 		await localParticipant.setCameraEnabled(true)
+	}
+
+	// stop camera track
+	async stopCameraTrack() {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.setCameraEnabled(false)
 	}
 
 	// create a screen share track
@@ -162,6 +171,13 @@ export default class LibraLiveKit extends EventEmitter {
 		await localParticipant.unpublishTrack(track)
 	}
 
+	async publishTrack(track: LocalTrack) {
+		const room = this.room
+		if (!room) return
+		const { localParticipant } = room
+		await localParticipant.publishTrack(track)
+	}
+
 	handleTrackSubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
 		this.emit('remote', {
 			track,
@@ -174,16 +190,21 @@ export default class LibraLiveKit extends EventEmitter {
 		// remove tracks from all attached elements
 		console.log('handleTrackUnsubscribed')
 		track.detach()
-		this.emit('quit', participant)
+		this.emit('quit', track, participant)
 	}
 
 	handleLocalTrackPublished = (track: LocalTrackPublication, participant: LocalParticipant) => {
-		console.log('handleTrackSubscribed')
+		console.log('handleLocalTrackPublished')
 		this.emit('local', {
 			track: track.track,
 			participant,
 			isVideo: track.track?.kind === Track.Kind.Video,
 		})
+	}
+
+	handleLocalTrackUnPublished = (track: LocalTrackPublication, participant: LocalParticipant) => {
+		console.log('handleLocalTrackUnPublished')
+		this.emit('quit', track.track, participant)
 	}
 
 	handleActiveSpeakerChange = (speakers: Participant[]) => {

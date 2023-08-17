@@ -31,6 +31,7 @@ import { UserStore } from '@/store/modules/user'
 import emitter from '@/utils/mitt'
 
 interface IVideo {
+	screenTrack: Track | null
 	videoTrack: Track | null
 	audioTrack: Track | null
 	isAudioMute: boolean
@@ -82,9 +83,10 @@ const LlkEvents = (llk: LibraLiveKit) => {
 	llk.on('remote', async (info: { track: RemoteTrack; participant: RemoteParticipant; isVideo: Boolean }) => {
 		streamAddAndPlay(info.track, info.participant, info.isVideo)
 	})
-	llk.on('quit', (participant: RemoteParticipant) => {
+	llk.on('quit', (track: RemoteTrack, participant: RemoteParticipant) => {
+		const isScreen = track.source === 'screen_share'
 		const metadata = JSON.parse(participant.metadata!)
-		videos.value = videos.value.filter((item) => item.userId !== metadata.userId)
+		videos.value = videos.value.filter((item) => isScreen ? item.userId !== `${metadata.userId}-screen` : item.userId !== metadata.userId)
 	})
 	llk.on('speakers', (speakers: Array<RemoteParticipant>) => {
 		const res = speakers.map((item) => JSON.parse(item.metadata!).username)
@@ -111,21 +113,28 @@ const LlkEvents = (llk: LibraLiveKit) => {
 
 // some one enter room, include myself
 const streamAddAndPlay = (track: Track, participant: Participant, isVideo: Boolean) => {
-	const { username, userId } = JSON.parse(participant.metadata!)
-	let user = videos.value.find((item) => item.userId === userId)
-	if (user) {
-		user[isVideo ? 'videoTrack' : 'audioTrack'] = track
-	} else {
-		videos.value.push({
-			username,
-			userId: userId,
-			videoTrack: isVideo ? track : null,
-			audioTrack: isVideo ? null : track,
-			isAudioMute: isVideo ? false : track.isMuted,
-			isVideoMute: isVideo ? track.isMuted : false,
-			isMe: userid === userId,
-		})
-	}
+  const { username, userId } = JSON.parse(participant.metadata!);
+  const isScreen = track.source === 'screen_share';
+  const user = videos.value.find((item) => item.userId === (isScreen ? `${userId}-screen` : userId));
+  if (user) {
+    if (isVideo) {
+      user.videoTrack = isScreen ? null : track;
+      user.screenTrack = isScreen ? track : null;
+    } else {
+      user.audioTrack = track;
+    }
+  } else {
+    videos.value.push({
+      username,
+      userId: isScreen ? `${userId}-screen` : userId,
+      videoTrack: isVideo ? (isScreen ? null : track) : null,
+      screenTrack: isVideo ? (isScreen ? track : null) : null,
+      audioTrack: isVideo ? null : track,
+      isAudioMute: !isVideo && track.isMuted,
+      isVideoMute: isVideo && track.isMuted,
+      isMe: userid === userId,
+    });
+  }
 }
 
 // update mute status

@@ -118,7 +118,6 @@ const startScreenShare = async () => {
 }
 const stopScreenShare = async () => {
 	await props.llk?.stopScreenTrack()
-	await props.llk?.restartCameraTrack()
 }
 
 /**
