@@ -1,4 +1,4 @@
-name: build
+name: libra-client
 on: 
   push: 
     branches: 
@@ -12,7 +12,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: libra-client
+      - name: Build
         run: |
           pwd
           cd liveKit-client
@@ -24,7 +24,7 @@ jobs:
         uses: cross-the-world/scp-pipeline@master
         env:
           WELCOME: "ssh scp ssh pipelines"
-          LASTSSH: "Doing something after copying"
+          LASTSSH: "nginx -s reload"
         with:
          host: ${{ secrets.LIBRA_HOST }}
          user: ${{ secrets.LIBRA_USER }}
@@ -32,5 +32,3 @@ jobs:
          connect_timeout: 10s
          local: './livekit-demo/liveKit-client/dist/*'
          remote: /livekit/client
-         last_ssh: |
-            nginx -s reload
