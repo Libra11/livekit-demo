@@ -31,4 +31,4 @@ jobs:
          pass: ${{ secrets.LIBRA_PASS }}
          connect_timeout: 10s
          local: './livekit-demo/liveKit-client/dist/*'
-         remote: /livekit/client
+         remote: /livekit/client/dist/
