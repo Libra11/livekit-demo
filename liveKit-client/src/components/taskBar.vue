@@ -48,6 +48,7 @@ import type LibraLiveKit from '@/livekit'
 import type { LocalTrack } from 'livekit-client'
 import SwitchButton from './SwitchButton.vue'
 import emitter from '@/utils/mitt'
+import type { ILayout } from '@/store/modules/user'
 
 const props = defineProps<{
 	llk: LibraLiveKit | null
@@ -132,7 +133,7 @@ const showMessage = (value: boolean) => {
 /**
  * layout
  */
-const changeLayout = (command: string) => {
+const changeLayout = (command: ILayout) => {
 	console.log(command)
 	emitter.emit('changeLayout', command)
 }

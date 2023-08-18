@@ -4,11 +4,12 @@
  * @LastEditors: Libra
  * @Description:
  */
+import type { ILayout } from '@/store/modules/user'
 import mitt from 'mitt'
 
 const emitter = mitt<{
 	showMessage: boolean
-	changeLayout: string
+	changeLayout: ILayout
 	equallyDivided: string
 }>()
 
