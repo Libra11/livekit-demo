@@ -5,5 +5,11 @@
  * @Description:
  */
 import mitt from 'mitt'
-const emitter = mitt()
+
+const emitter = mitt<{
+	showMessage: boolean
+	changeLayout: string
+	equallyDivided: string
+}>()
+
 export default emitter
