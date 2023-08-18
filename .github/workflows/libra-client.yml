@@ -15,7 +15,7 @@ jobs:
       - name: Build
         run: |
           pwd
-          cd livekit-client
+          cd liveKit-client
           npm install  -g yarn
           yarn
           yarn build
