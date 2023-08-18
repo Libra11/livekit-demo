@@ -30,5 +30,7 @@ jobs:
          user: ${{ secrets.LIBRA_USER }}
          pass: ${{ secrets.LIBRA_PASS }}
          connect_timeout: 10s
-         local: './livekit-demo/livekit-client/dist/*'
+         local: './livekit-demo/liveKit-client/dist/*'
          remote: /livekit/client
+         last_ssh: |
+            nginx -s reload
