@@ -13,11 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build project
-        run: yarn build
+      - name: Build
+        run: |
+          pwd
+          cd liveKit-server
+          npm install  -g yarn
+          yarn
+          yarn build
 
       - name: Deploy 🚀
         uses: cross-the-world/scp-pipeline@master
