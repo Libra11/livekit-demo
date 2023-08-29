@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: libra-server
 
 on:
   push:
@@ -33,6 +33,7 @@ jobs:
           connect_timeout: 10s
           local: "./livekit-demo/liveKit-server/dist/*"
           remote: /livekit/server
-          script: |
-            cd /livekit/server
-            pm2 restart index.js
+      - name: Start
+        run: |
+          cd /livekit/server
+          pm2 restart index.js
