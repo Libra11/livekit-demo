@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+env:
+  LIVEKIT_API_KEY: ${{secrets.LIVEKIT_LIBRA_KEY}}
+  LIVEKIT_API_SECRET: ${{secrets.LIVEKIT_LIBRA_SECRET}}
 
 jobs:
   deploy:
