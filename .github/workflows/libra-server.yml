@@ -1,0 +1,36 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build
+
+      - name: Deploy 🚀
+        uses: cross-the-world/scp-pipeline@master
+        env:
+          WELCOME: "ssh scp ssh pipelines"
+          LASTSSH: "Doing something after copying"
+        with:
+          host: ${{ secrets.LIBRA_HOST }}
+          user: ${{ secrets.LIBRA_USER }}
+          pass: ${{ secrets.LIBRA_PASS }}
+          connect_timeout: 10s
+          local: "./livekit-demo/liveKit-server/dist/*"
+          remote: /livekit/server
+          script: |
+            cd /livekit/server
+            pm2 restart index.js
