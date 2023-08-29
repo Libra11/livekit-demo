@@ -37,5 +37,4 @@ jobs:
             './liveKit-server/dist/*' => /livekit/server
           last_ssh: |
             cd /livekit/server
-            pm2 stop index.js
             pm2 restart index.js
