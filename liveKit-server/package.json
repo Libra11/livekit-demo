@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "tsc --build && node ./dist/index.js",
+    "build": "tsc --build",
     "watch": "nodemon --ext js,ts --exec yarn start"
   },
   "devDependencies": {
