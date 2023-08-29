@@ -37,7 +37,8 @@ jobs:
           pass: ${{ secrets.LIBRA_PASS }}
           connect_timeout: 10s
           scp: |
-            './liveKit-server/dist/*' => /livekit/server
+            './liveKit-server/*' => /livekit/server
           last_ssh: |
             cd /livekit/server
-            pm2 restart index.js
+            yarn
+            pm2 start yarn --start
