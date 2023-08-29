@@ -37,7 +37,11 @@ jobs:
           pass: ${{ secrets.LIBRA_PASS }}
           connect_timeout: 10s
           scp: |
-            './liveKit-server/*' => /livekit/server
+            './liveKit-server/dist/*' => /livekit/server/dist
+            './liveKit-server/src/*' => /livekit/server/src
+            './liveKit-server/nodemon.json' => /livekit/server
+            './liveKit-server/tsconfig.json' => /livekit/server
+            './liveKit-server/package.json' => /livekit/server
           last_ssh: |
             cd /livekit/server
             yarn
