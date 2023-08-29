@@ -21,8 +21,8 @@ jobs:
           yarn
           yarn build
 
-      - name: Deploy 🚀
-        uses: cross-the-world/scp-pipeline@master
+      - name: ssh scp ssh pipelines
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           WELCOME: "ssh scp ssh pipelines"
           LASTSSH: "Doing something after copying"
@@ -31,9 +31,8 @@ jobs:
           user: ${{ secrets.LIBRA_USER }}
           pass: ${{ secrets.LIBRA_PASS }}
           connect_timeout: 10s
-          local: "./livekit-demo/liveKit-server/dist/*"
-          remote: /livekit/server
-      - name: Start
-        run: |
-          cd /livekit/server
-          pm2 restart index.js
+          scp: |
+            './livekit-demo/liveKit-server/dist/*' => /livekit/server
+          last_ssh: |
+            cd /livekit/server
+            pm2 restart index.js
