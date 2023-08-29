@@ -17,9 +17,11 @@ jobs:
         run: |
           pwd
           cd liveKit-server
-          npm install  -g yarn
+          npm install -g yarn
           yarn
           yarn build
+          cd dist
+          pwd
 
       - name: ssh scp ssh pipelines
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
