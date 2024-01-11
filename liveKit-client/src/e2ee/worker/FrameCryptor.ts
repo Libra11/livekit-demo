@@ -162,6 +162,12 @@ export class FrameCryptor extends BaseFrameCryptor {
 			return controller.enqueue(encodedFrame)
 		}
 
+		// if (isVideoFrame(encodedFrame)) {
+		// 	workerLogger.debug('video frame size', { byteLength: encodedFrame.data.byteLength })
+		// } else {
+		// 	workerLogger.debug('audio frame size', { byteLength: encodedFrame.data.byteLength })
+		// }
+
 		const { encryptionKey } = this.keys.getKeySet()
 		const keyIndex = this.keys.getCurrentKeyIndex()
 

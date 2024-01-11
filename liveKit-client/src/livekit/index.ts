@@ -20,7 +20,6 @@ import {
 	Track,
 	TrackPublication,
 	VideoPresets,
-	type E2EEOptions,
 } from 'livekit-client'
 import { EventEmitter } from 'events'
 import { getToken } from '@/api/token'
@@ -51,7 +50,7 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	async createRoom() {
-		const e2eeEnabled = false
+		const e2eeEnabled = true
 		const keyProvider = new ExternalE2EEKeyProvider()
 		const cryptoKey = 'password'
 		keyProvider.setKey(cryptoKey)
@@ -75,6 +74,7 @@ export default class LibraLiveKit extends EventEmitter {
 			if (!room) return
 			await room.connect(WEBSOCKET_URL, res.data)
 			console.log('connected to room', room.name)
+			console.log('e2ee enabled', this.room?.isE2EEEnabled)
 		}
 	}
 	async leaveRoom() {

@@ -21,7 +21,7 @@ let sharedKey: CryptoKey | undefined
 
 let keyProviderOptions: KeyProviderOptions = KEY_PROVIDER_DEFAULTS
 
-workerLogger.setDefaultLevel('info')
+workerLogger.setDefaultLevel('debug')
 
 onmessage = (ev) => {
 	const { kind, data }: E2EEWorkerMessage = ev.data

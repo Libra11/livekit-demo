@@ -37,7 +37,7 @@ export function getOptions(options?: RequestOptions): RequestInit {
 	return { ...defaultOptions, ...options }
 }
 
-export default async <T>(url: string, option?: RequestInit): Promise<ResponseData<T>> => {
+export default async <T>(url: string, option?: RequestOptions): Promise<ResponseData<T>> => {
 	const newOption = getOptions(option)
 	const newUrl = base + url
 	try {

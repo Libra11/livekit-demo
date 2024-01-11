@@ -17,6 +17,7 @@ interface IUserStore {
 	token: string
 	userName: string
 	layout: ILayout
+	llkToken: string
 }
 
 export const UserStore = defineStore('user', {
@@ -24,6 +25,7 @@ export const UserStore = defineStore('user', {
 		token: '',
 		userName: '',
 		layout: 'EquallyDivided',
+		llkToken: '',
 	}),
 	actions: {
 		setToken(token: string) {
@@ -35,11 +37,15 @@ export const UserStore = defineStore('user', {
 		setLayout(layout: ILayout) {
 			this.layout = layout
 		},
+		setLlkToken(llkToken: string) {
+			this.llkToken = llkToken
+		},
 	},
 	getters: {
 		getToken: (state) => state.token,
 		getUserName: (state) => state.userName,
 		getLayout: (state) => state.layout,
+		getLlkToken: (state) => state.llkToken,
 	},
 	persist: {
 		enabled: true,
