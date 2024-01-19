@@ -8,6 +8,7 @@
 import { base } from '@/api/config'
 import { useToken } from '@/composables/useVar'
 import { handleCode } from './code'
+import { UserStore } from '@/store/modules/user'
 
 export type ResponseData<T> = {
 	code: number
@@ -27,7 +28,7 @@ export function getOptions(options?: RequestOptions): RequestInit {
 	if (options?.formData) {
 		options.body = options.formData
 	} else {
-		headers['Content-Type'] = 'application/json'
+		headers['Content-Type'] = '`application/json`'
 	}
 	// 设置默认值
 	const defaultOptions: RequestInit = {
@@ -43,6 +44,11 @@ export default async <T>(url: string, option?: RequestOptions): Promise<Response
 	try {
 		const response = await fetch(newUrl, newOption)
 		const res = await response.json()
+		// response.headers.forEach((value, key) => console.log(key, value))
+		if (response.headers.get('Token')) {
+			const userStore = UserStore()
+			userStore.setToken(response.headers.get('Token') as string)
+		}
 		if (res.code === 200) return res
 		handleCode(res)
 		return res

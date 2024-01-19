@@ -25,22 +25,26 @@ import { EventEmitter } from 'events'
 import { getToken } from '@/api/token'
 import { WEBSOCKET_URL } from '@/config/config'
 import E2EEWorker from '../e2ee/worker/e2ee.worker?worker'
+import { joinMeet } from '@/api/meet'
 
 interface IInit {
 	userId: string
 	username: string
 	roomname: string
+	login: boolean
 }
 export default class LibraLiveKit extends EventEmitter {
 	private username: string
 	private roomname: string
 	private userId: string
 	private room: Room | null = null
-	constructor({ username, roomname, userId }: IInit) {
+	private login: boolean
+	constructor({ username, roomname, userId, login }: IInit) {
 		super()
 		this.username = username
 		this.roomname = roomname
 		this.userId = userId
+		this.login = login
 	}
 	async init() {
 		await this.createRoom()
@@ -68,14 +72,21 @@ export default class LibraLiveKit extends EventEmitter {
 		}
 	}
 	async joinRoom() {
-		const res = await getToken(this.userId, this.roomname)
-		const room = this.room
-		if (res.code === 200) {
-			if (!room) return
-			await room.connect(WEBSOCKET_URL, res.data)
-			console.log('connected to room', room.name)
-			console.log('e2ee enabled', this.room?.isE2EEEnabled)
+		let token = ''
+		if (!this.login) {
+			const res = await getToken(this.userId, this.roomname)
+			if (res.code !== 200) return
+			token = res.data
+		} else {
+			const res = await joinMeet(this.roomname)
+			if (res.code !== 200) return
+			token = res.data.token
 		}
+		const room = this.room
+		if (!room) return
+		await room.connect(WEBSOCKET_URL, token)
+		console.log('connected to room', room.name)
+		console.log('e2ee enabled', this.room?.isE2EEEnabled)
 	}
 	async leaveRoom() {
 		const room = this.room

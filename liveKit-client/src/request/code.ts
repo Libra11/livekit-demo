@@ -11,6 +11,7 @@ import { ElMessage } from 'element-plus'
 const code = {
 	// 登录失败
 	LOGIN_FAIL: 1005,
+	NOT_FOUND: 404,
 }
 
 export function handleCode(res: ResponseData<string>) {
@@ -18,6 +19,10 @@ export function handleCode(res: ResponseData<string>) {
 		case code.LOGIN_FAIL:
 			// 登录失败
 			ElMessage.error('登录失败')
+			break
+		case code.NOT_FOUND:
+			// 404
+			ElMessage.error('404')
 			break
 		default:
 			ElMessage.error(res.message)

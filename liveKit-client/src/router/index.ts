@@ -24,6 +24,49 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'About',
 		component: () => import('../views/AboutView.vue'),
 	},
+	{
+		path: '/user-center',
+		name: 'Center',
+		redirect: '/user-center/user-info',
+		component: () => import('../views/UserCenterView.vue'),
+		children: [
+			{
+				path: 'user-info',
+				name: 'UserInfo',
+				component: () => import('../views/UserInfoView.vue'),
+			},
+			{
+				path: 'create-meet',
+				name: 'CreateMeet',
+				component: () => import('../views/CreateMeetView.vue'),
+			},
+			{
+				path: 'meet-config',
+				name: 'MeetConfig',
+				component: () => import('../views/MeetConfigView.vue'),
+			},
+			{
+				path: 'join-meet',
+				name: 'JoinMeet',
+				component: () => import('../views/JoinMeetView.vue'),
+			},
+			{
+				path: 'meet-arrangement',
+				name: 'MeetArrangement',
+				component: () => import('../views/MeetArrangementView.vue'),
+			},
+			{
+				path: 'meet-history',
+				name: 'MeetHistory',
+				component: () => import('../views/MeetHistoryView.vue'),
+			},
+			{
+				path: 'contacts',
+				name: 'Contacts',
+				component: () => import('../views/Contacts.vue'),
+			},
+		],
+	},
 ]
 
 const router = createRouter({
