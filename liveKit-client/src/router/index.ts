@@ -12,7 +12,7 @@ import { useToken } from '@/composables/useVar'
 const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/',
-		redirect: '/login',
+		redirect: '/user-center',
 	},
 	{
 		path: '/login',
@@ -66,6 +66,11 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import('../views/Contacts.vue'),
 			},
 		],
+	},
+	{
+		path: '/invite/:link',
+		name: 'Invite',
+		component: () => import('../views/InviteJoinView.vue'),
 	},
 ]
 

@@ -44,7 +44,9 @@ import { reactive } from 'vue'
 import { emailRegister, emailLogin, registerCode, loginCode, codeLogin } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { UserStore } from '@/store/modules/user'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const userStore = UserStore()
 
 const formData = reactive({
@@ -133,5 +135,8 @@ const loginByCode = async () => {
 	userStore.setToken(token)
 
 	ElMessage.success('登录成功')
+	router.push({
+		path: '/user-center',
+	})
 }
 </script>

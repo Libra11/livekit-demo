@@ -10,13 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import { quickCreateMeet } from '@/api/meet'
+import { quickCreateMeet, getInviteLink } from '@/api/meet'
+import { ElMessage } from 'element-plus'
 
 const quickCreate = async () => {
 	const res = await quickCreateMeet()
 	if (res.code !== 200) {
 		return
 	}
-	console.log(res.data)
+
+	const linkRes = await getInviteLink(res.data.id.toString())
+	if (linkRes.code !== 200) {
+		return
+	}
+	console.log(linkRes.data.link)
+	ElMessage.success('创建成功')
 }
 </script>

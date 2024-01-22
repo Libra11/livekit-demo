@@ -16,6 +16,7 @@ type Meet = {
 
 type MeetToken = Meet & {
 	token: string
+	link: string
 }
 
 type MeetConfig = {
@@ -55,5 +56,13 @@ function joinMeet(roomId: string) {
 	return fetch<MeetToken>(`/meet/join/${roomId}`, { method: 'POST' })
 }
 
-export { quickCreateMeet, createMeetByConfig, joinMeet }
+function getInviteLink(roomId: string) {
+	return fetch<MeetToken>(`/meet/link?roomId=${roomId}`, { method: 'GET' })
+}
+
+function getMeetByLink(link: string) {
+	return fetch<MeetToken>(`/meet/invite/${link}`, { method: 'GET' })
+}
+
+export { quickCreateMeet, createMeetByConfig, joinMeet, getInviteLink, getMeetByLink }
 export type { Meet, MeetConfig, MeetToken }
