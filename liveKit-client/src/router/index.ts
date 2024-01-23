@@ -20,6 +20,11 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import('../views/LoginView.vue'),
 	},
 	{
+		path: '/join',
+		name: 'Join',
+		component: () => import('../views/JoinView.vue'),
+	},
+	{
 		path: '/about',
 		name: 'About',
 		component: () => import('../views/AboutView.vue'),

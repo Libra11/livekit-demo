@@ -9,10 +9,11 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    copy: typeof import('./components/VideoContainer copy.vue')['default']
+    copy: typeof import('./components/DropButton copy.vue')['default']
     CustomDialog: typeof import('./components/CustomDialog.vue')['default']
     CustomHeader: typeof import('./components/CustomHeader.vue')['default']
     DropButton: typeof import('./components/DropButton.vue')['default']
+    DropImageButton: typeof import('./components/DropImageButton.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCol: typeof import('element-plus/es')['ElCol']
@@ -25,6 +26,7 @@ declare module '@vue/runtime-core' {
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
