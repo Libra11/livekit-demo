@@ -4,14 +4,17 @@ type Meet = {
 	id: number
 	name: string
 
-	createTime: number
-	startTime: number
-	endTime: number
+	createTime: Date
+	startTime: Date
+	endTime: Date
 
-	isPrivate: boolean
-	isEnd: boolean
+	private: boolean
+	end: boolean
 	hasPassword: boolean
-	isSecurity: boolean
+	security: boolean
+
+	record: boolean
+	recordUrl: string
 }
 
 type MeetToken = Meet & {
@@ -64,5 +67,13 @@ function getMeetByLink(link: string) {
 	return fetch<MeetToken>(`/meet/invite/${link}`, { method: 'GET' })
 }
 
-export { quickCreateMeet, createMeetByConfig, joinMeet, getInviteLink, getMeetByLink }
+function getMeetArrangement() {
+	return fetch<Meet[]>(`/meet/arrangement`, { method: 'GET' })
+}
+
+function getMeetHistory() {
+	return fetch<Meet[]>(`/meet/history`, { method: 'GET' })
+}
+
+export { quickCreateMeet, createMeetByConfig, joinMeet, getInviteLink, getMeetByLink, getMeetArrangement, getMeetHistory}
 export type { Meet, MeetConfig, MeetToken }

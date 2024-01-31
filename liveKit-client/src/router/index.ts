@@ -77,6 +77,11 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'Invite',
 		component: () => import('../views/InviteJoinView.vue'),
 	},
+	{
+		path: '/replay',
+		name: 'Replay',
+		component: () => import('../views/ReplayView.vue'),
+	}
 ]
 
 const router = createRouter({
@@ -87,6 +92,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	// 检查 token 是否存在
 	const token = useToken().value
+	console.log('token', token)
 	// 检查路由名称是否在白名单中
 	if (whiteList.includes(to.name as string)) {
 		next()

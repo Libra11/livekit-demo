@@ -44,6 +44,7 @@
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
+		<switch-button :value="luzhi" icon="luzhi" @switch="record" />
 		<switch-button :value="screen" icon="pingmu-screen" @switch="screenShare" />
 		<switch-button :value="message" icon="message" @switch="showMessage" />
 		<!-- </el-card> -->
@@ -59,6 +60,7 @@ import type { LocalTrack } from 'livekit-client'
 import SwitchButton from './SwitchButton.vue'
 import emitter from '@/utils/mitt'
 import { BackgroundBlur, VirtualBackground } from '@livekit/track-processors'
+import { startRecord, stopRecord } from "@/api/record";
 
 const props = defineProps<{
 	llk: LibraLiveKit | null
@@ -142,6 +144,29 @@ const switchCamera = async (device: MediaDeviceInfo) => {
 // switch mic
 const switchMic = async (device: MediaDeviceInfo) => {
 	await props.llk?.switchLocalDevice('audio', device.deviceId)
+}
+
+const record = async (value: boolean) => {
+	value ? await startRecording() : await stopRecording()
+	luzhi.value = value
+}
+
+const recordId = ref('')
+const luzhi = ref(false)
+
+const startRecording = async () => {
+	const res = await startRecord(props.llk?.roomname as string)
+	if (res.code !== 200) {
+		return
+	}
+	recordId.value = res.data.recordId
+}
+
+const stopRecording = async () => {
+	const res = await stopRecord(recordId.value)
+	if (res.code !== 200) {
+		return
+	}
 }
 
 /**

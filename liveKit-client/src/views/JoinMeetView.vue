@@ -53,6 +53,7 @@ const join = () => {
 			username: userInfo.name,
 			roomname: formData.roomId,
 			userId: userInfo.id,
+			login: 'true',
 		},
 	})
 }

@@ -35,7 +35,7 @@ interface IInit {
 }
 export default class LibraLiveKit extends EventEmitter {
 	private username: string
-	private roomname: string
+	public roomname: string
 	private userId: string
 	private room: Room | null = null
 	private login: boolean
@@ -54,7 +54,7 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	async createRoom() {
-		const e2eeEnabled = true
+		const e2eeEnabled = false
 		const keyProvider = new ExternalE2EEKeyProvider()
 		const cryptoKey = 'password'
 		keyProvider.setKey(cryptoKey)

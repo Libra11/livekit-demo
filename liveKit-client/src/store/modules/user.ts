@@ -49,5 +49,6 @@ export const UserStore = defineStore('user', {
 	},
 	persist: {
 		enabled: true,
+		strategies: [{storage: localStorage}]
 	},
 })
