@@ -1,6 +1,6 @@
 <template>
-	<div class="flex h-screen flex-col items-center justify-center">
-		<div class="w-80">
+	<div class="flex w-full flex-col items-center justify-center">
+		<div class="w-100">
 			<el-form ref="form" :model="formData" label-width="100px">
 				<el-form-item label="会议名称" prop="name" required>
 					<el-input v-model="formData.name" />
@@ -10,7 +10,7 @@
 				</el-form-item>
 				<el-form-item label="会议时间" required>
 					<el-col :span="11">
-						<el-form-item prop="date1">
+						<el-form-item prop="date1" class="!mb-2">
 							<el-date-picker v-model="formData.startTime" type="date" label="Pick a date" placeholder="Pick a date" style="width: 100%" />
 						</el-form-item>
 						<el-form-item prop="time1">
@@ -29,7 +29,7 @@
 						<span class="text-gray-500">-</span>
 					</el-col>
 					<el-col :span="11">
-						<el-form-item prop="date2">
+						<el-form-item prop="date2" class="!mb-2">
 							<el-date-picker v-model="formData.endTime" type="date" label="Pick a date" placeholder="Pick a date" style="width: 100%" />
 						</el-form-item>
 						<el-form-item prop="time2">

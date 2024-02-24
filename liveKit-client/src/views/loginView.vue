@@ -8,33 +8,49 @@
 <template>
 	<div class="flex h-screen flex-col items-center justify-center">
 		<div class="w-80">
-			<el-form ref="form" :model="formData" label-width="0">
-				<el-form-item>
-					<el-input v-model="formData.email" placeholder="请输入邮箱"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-input v-model="formData.password" placeholder="请输入密码"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="registerByEmail">注册</el-button>
-					<el-button type="primary" @click="loginByEmail">登录</el-button>
-				</el-form-item>
-			</el-form>
-			<el-form ref="form" :model="formData" label-width="0">
-				<el-form-item>
-					<el-input v-model="formData.phone" placeholder="请输入手机号"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-input v-model="formData.code" placeholder="请输入验证码"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="sendRegisterCode">注册验证码</el-button>
-					<el-button type="primary" @click="sendLoginCode">登陆验证码</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="loginByCode">注册/登陆</el-button>
-				</el-form-item>
-			</el-form>
+			<el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+				<el-tab-pane label="登录" name="login">
+					<el-form ref="form" :model="formData" label-width="0">
+						<el-form-item>
+							<el-input v-model="formData.email" placeholder="请输入邮箱"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input v-model="formData.password" placeholder="请输入密码"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-button type="primary" @click="loginByEmail">登录</el-button>
+							<!-- 找回密码 -->
+							<el-button type="text">忘记密码</el-button>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="注册" name="register">
+					<el-form ref="form" :model="formData" label-width="0">
+						<el-form-item>
+							<el-input v-model="formData.userName" placeholder="请输入用户名"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input type="password" v-model="formData.userName" placeholder="请输入密码"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input type="password" v-model="formData.email" placeholder="请确认密码"> </el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input type="password" v-model="formData.email" placeholder="请输入邮箱">
+								<template #append>
+									<el-button :icon="Position" />
+								</template>
+							</el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-input v-model="formData.code" placeholder="请输入验证码"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-button type="primary" @click="loginByCode">注册</el-button>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+			</el-tabs>
 		</div>
 	</div>
 </template>
@@ -45,9 +61,11 @@ import { emailRegister, emailLogin, registerCode, loginCode, codeLogin } from '@
 import { ElMessage } from 'element-plus'
 import { UserStore } from '@/store/modules/user'
 import { useRouter } from 'vue-router'
+import { Position } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userStore = UserStore()
+const activeName = 'login'
 
 const formData = reactive({
 	email: '',

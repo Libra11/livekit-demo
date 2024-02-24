@@ -13,6 +13,7 @@ import store from './store'
 
 import '@/style/index.scss'
 import 'element-plus/theme-chalk/el-message.css'
+import 'element-plus/theme-chalk/index.css'
 import '@/style/index.css'
 
 const app = createApp(App)

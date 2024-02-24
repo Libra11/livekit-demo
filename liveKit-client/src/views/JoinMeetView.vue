@@ -6,17 +6,18 @@
  * @Description: 
 -->
 <template>
-	<div class="flex h-screen flex-col items-center justify-center">
-		<div class="w-80">
-			<el-form ref="form" :model="formData" label-width="0">
-				<el-form-item>
-					<el-input v-model="formData.roomId" placeholder="请输入房间号"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="join">加入房间</el-button>
-				</el-form-item>
-			</el-form>
-		</div>
+	<div class="flex h-full w-full items-center justify-center">
+		<el-form ref="form" :model="formData" label-width="0" class="flex w-80 flex-col items-center justify-center">
+			<el-form-item label="房间号" label-width="80px">
+				<el-input v-model="formData.roomId" placeholder="请输入房间号"></el-input>
+			</el-form-item>
+			<el-form-item label="密码" label-width="80px">
+				<el-input v-model="formData.password" placeholder="请输入密码"></el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" @click="join">加入房间</el-button>
+			</el-form-item>
+		</el-form>
 	</div>
 </template>
 
@@ -44,6 +45,7 @@ const loadUserInfo = async () => {
 
 const formData = reactive({
 	roomId: '',
+	password: '',
 })
 
 const join = () => {
