@@ -47,7 +47,7 @@ let localAudioTrack: Ref<LocalTrack | null> = ref(null)
 let localScreenTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
-const { roomname, username, userId: userid } = route.query
+const { roomname, username, userId: userid, login, password } = route.query
 const userStore = UserStore()
 userStore.setUserName(username as string)
 onMounted(async () => {
@@ -60,6 +60,8 @@ const createLibraLiveKit = () => {
 		username: username as string,
 		roomname: roomname as string,
 		userId: userid as string,
+		login: login === 'true',
+		password: password as string,
 	})
 	llk.init()
 	// store ll
@@ -140,7 +142,7 @@ const moveItemToFirst = (arr: Array<IVideo>, index: number) => {
  * layout control
  */
 watch(
-	()=> videos.value.length,
+	() => videos.value.length,
 	() => {
 		const layout = userStore.getLayout
 		if (layout === 'EquallyDivided') {
@@ -158,15 +160,21 @@ watch(
 	}
 )
 const getEquallyDividedClass = () => {
-  const length = videos.value.length;
-  return length === 1 ? "grid-one-one"
-    : length === 2 ? "grid-one-two"
-    : length === 3 ? "header-foot-foot"
-    : length === 4 ? "grid-two-two"
-    : length >= 5 && length <= 6 ? "grid-two-three"
-    : length >= 7 && length <= 9 ? "grid-three-three"
-    : "grid-three-four";
-};
+	const length = videos.value.length
+	return length === 1
+		? 'grid-one-one'
+		: length === 2
+		? 'grid-one-two'
+		: length === 3
+		? 'header-foot-foot'
+		: length === 4
+		? 'grid-two-two'
+		: length >= 5 && length <= 6
+		? 'grid-two-three'
+		: length >= 7 && length <= 9
+		? 'grid-three-three'
+		: 'grid-three-four'
+}
 </script>
 
 <style lang="scss" scoped>

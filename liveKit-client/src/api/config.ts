@@ -6,9 +6,9 @@
  * @Description: 测试环境和生产环境配置文件
  */
 
-const dev_url: string = 'http://127.0.0.1:3000/api'
+const dev_url: string = 'http://localhost:8080'
 
-const exam_prod_url: string = 'https://livekit-api.jusbin.cn/api'
+const exam_prod_url: string = 'https://livekit-api.jusbin.cn'
 let base: string = ''
 switch (process.env.NODE_ENV) {
 	case 'development':
