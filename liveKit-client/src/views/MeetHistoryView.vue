@@ -3,7 +3,7 @@
 		<el-table-column fixed prop="startTime" label="开始时间" width="240" :formatter="formatDate" />
 		<el-table-column prop="endTime" label="结束时间" width="240" :formatter="formatDate" />
 		<el-table-column prop="name" label="会议名称" width="240" />
-		<el-table-column prop="id" label="会议号" width="240" />
+		<el-table-column prop="id" label="会议号" width="200" />
 		<el-table-column label="会议录像" width="240">
 			<template #default="scope">
 				<i v-if="scope.row.record" class="iconfont icon-dianbohuifang" @click="watchReplay(scope.row.recordUrl)"></i>

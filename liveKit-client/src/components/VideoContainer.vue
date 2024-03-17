@@ -47,7 +47,7 @@ let localAudioTrack: Ref<LocalTrack | null> = ref(null)
 let localScreenTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
-const { roomname, username, userId: userid, login } = route.query
+const { roomname, username, userId: userid, login, password } = route.query
 const userStore = UserStore()
 userStore.setUserName(username as string)
 onMounted(async () => {
@@ -61,6 +61,7 @@ const createLibraLiveKit = () => {
 		roomname: roomname as string,
 		userId: userid as string,
 		login: login === 'true',
+		password: password as string,
 	})
 	llk.init()
 	// store ll

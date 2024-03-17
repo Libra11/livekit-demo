@@ -316,8 +316,8 @@ export class FrameCryptor extends BaseFrameCryptor {
 			if (this.keyProviderOptions.ratchetWindowSize > 0) {
 				if (ratchetOpts.ratchetCount < this.keyProviderOptions.ratchetWindowSize) {
 					workerLogger.debug(
-						`ratcheting key attempt ${ratchetOpts.ratchetCount} of ${this.keyProviderOptions.ratchetWindowSize}, for kind ${
-							encodedFrame instanceof RTCEncodedAudioFrame ? 'audio' : 'video'
+						`尝试转动密钥 ${ratchetOpts.ratchetCount}/${this.keyProviderOptions.ratchetWindowSize}次, 媒体类型: ${
+							encodedFrame instanceof RTCEncodedAudioFrame ? '音频' : '视频'
 						}`
 					)
 

@@ -20,6 +20,8 @@ import {
 	Track,
 	TrackPublication,
 	VideoPresets,
+	deriveKeys,
+	setLogLevel,
 } from 'livekit-client'
 import { EventEmitter } from 'events'
 import { getToken } from '@/api/token'
@@ -32,6 +34,7 @@ interface IInit {
 	username: string
 	roomname: string
 	login: boolean
+	password: string
 }
 export default class LibraLiveKit extends EventEmitter {
 	private username: string
@@ -39,12 +42,16 @@ export default class LibraLiveKit extends EventEmitter {
 	private userId: string
 	private room: Room | null = null
 	private login: boolean
-	constructor({ username, roomname, userId, login }: IInit) {
+	private password: string
+	private cryptor: CryptoKey | null = null
+	public keyProvider: ExternalE2EEKeyProvider | null = null
+	constructor({ username, roomname, userId, login, password }: IInit) {
 		super()
 		this.username = username
 		this.roomname = roomname
 		this.userId = userId
 		this.login = login
+		this.password = password
 	}
 	async init() {
 		await this.createRoom()
@@ -54,10 +61,17 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	async createRoom() {
-		const e2eeEnabled = false
-		const keyProvider = new ExternalE2EEKeyProvider()
-		const cryptoKey = 'password'
-		keyProvider.setKey(cryptoKey)
+		let e2eeEnabled = false
+
+		if (this.password !== undefined && this.password.length > 0) {
+			this.keyProvider = new ExternalE2EEKeyProvider()
+			await this.keyProvider.setKey(this.password)
+			const rawKey = this.keyProvider.getKeys()[0].key
+			const res = await deriveKeys(rawKey, 'password')
+			this.cryptor = res.encryptionKey
+			e2eeEnabled = true
+			console.log('e2ee enabled', e2eeEnabled)
+		}
 
 		this.room = new Room({
 			adaptiveStream: true,
@@ -65,11 +79,12 @@ export default class LibraLiveKit extends EventEmitter {
 			videoCaptureDefaults: {
 				resolution: VideoPresets.h720.resolution,
 			},
-			e2ee: e2eeEnabled ? { keyProvider, worker: new E2EEWorker() } : undefined,
+			e2ee: e2eeEnabled ? { keyProvider: this.keyProvider as ExternalE2EEKeyProvider, worker: new E2EEWorker() } : undefined,
 		})
 		if (e2eeEnabled) {
 			await this.room.setE2EEEnabled(true)
 		}
+		setLogLevel('trace')
 	}
 	async joinRoom() {
 		let token = ''
@@ -116,13 +131,19 @@ export default class LibraLiveKit extends EventEmitter {
 		}
 	}
 	// send message
-	sendMessage(message: string) {
+	async sendMessage(message: string) {
 		const room = this.room
 		if (!room) return
 		const strData = JSON.stringify(message)
 		const encoder = new TextEncoder()
 		// publishData takes in a Uint8Array, so we need to convert it
 		const data = encoder.encode(strData)
+		if (this.cryptor) {
+			// encrypt data if e2ee is enabled
+			const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, this.cryptor, data)
+			room.localParticipant.publishData(new Uint8Array(encryptedData), DataPacket_Kind.LOSSY)
+			return
+		}
 		// publish lossy data to the entire room
 		room.localParticipant.publishData(data, DataPacket_Kind.LOSSY)
 	}
@@ -229,6 +250,24 @@ export default class LibraLiveKit extends EventEmitter {
 	}
 
 	handleMessageReceived = (data: Uint8Array, participant?: RemoteParticipant, kind?: DataPacket_Kind, topic?: any) => {
+		// decrypt first
+		if (this.cryptor) {
+			crypto.subtle
+				.decrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, this.cryptor, data)
+				.then((res) => {
+					data = new Uint8Array(res)
+					const decoder = new TextDecoder()
+					const message = decoder.decode(data)
+					this.emit('message', message, participant)
+					console.log('handleMessageReceived', message, participant)
+					console.log('decrypt', message, this.cryptor)
+				})
+				.catch((err) => {
+					console.error('failed to decrypt message', err)
+				})
+			return
+		}
+
 		const decoder = new TextDecoder()
 		const message = decoder.decode(data)
 		this.emit('message', message, participant)

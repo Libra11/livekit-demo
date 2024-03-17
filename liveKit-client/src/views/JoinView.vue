@@ -16,6 +16,9 @@
 					<el-input v-model="formData.room" placeholder="请输入房间号"></el-input>
 				</el-form-item>
 				<el-form-item>
+					<el-input v-model="formData.password" placeholder="请输入加密密码"></el-input>
+				</el-form-item>
+				<el-form-item>
 					<el-button type="primary" @click="login">登录</el-button>
 				</el-form-item>
 			</el-form>
@@ -34,6 +37,7 @@ const userId = uuidv4()
 const formData = reactive({
 	username: '',
 	room: '',
+	password: '',
 })
 
 const login = () => {
@@ -43,6 +47,7 @@ const login = () => {
 			username: formData.username,
 			roomname: formData.room,
 			userId,
+			password: formData.password,
 		},
 	})
 }

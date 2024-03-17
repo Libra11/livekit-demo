@@ -6,7 +6,9 @@
 		<el-table-column fixed="right" label="操作" width="240">
 			<template #default="scope">
 				<el-button link type="primary" size="small" @click="handleJoin(scope.row.id)">加入</el-button>
+				<el-button link type="primary" size="small" @click="handleJoin(scope.row.id)">取消</el-button>
 				<el-button link type="primary" size="small" @click="handleJoin(scope.row.id)">邀请</el-button>
+				<el-button link type="primary" size="small" @click="handleJoin(scope.row.id)">复制邀请链接</el-button>
 			</template>
 		</el-table-column>
 	</el-table>
@@ -30,6 +32,7 @@ const handleJoin = (id: string) => {
 			username: userInfo.name,
 			roomname: id,
 			userId: userInfo.id,
+			login: 'true',
 		},
 	})
 }

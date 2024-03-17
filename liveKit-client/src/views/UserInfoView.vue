@@ -1,11 +1,12 @@
 <template>
-	<div class="flex h-screen flex-col p-5">
+	<div class="item-center flex h-screen flex-col p-20">
 		<div class="w-80">
 			<el-descriptions title="用户信息">
 				<el-descriptions-item label="用户名">{{ userInfo.name }}</el-descriptions-item>
 				<el-descriptions-item label="邮箱">{{ userInfo.email }}</el-descriptions-item>
 			</el-descriptions>
-			<el-button type="primary" class="mt-5">修改用户信息</el-button>
+			<el-button type="primary" class="mt-5">修改用户名</el-button>
+			<el-button type="primary" class="mt-5">修改邮箱</el-button>
 			<el-button type="primary" class="mt-5">修改密码</el-button>
 		</div>
 	</div>

@@ -7,7 +7,7 @@
 			
 		</div> -->
 		<el-button class="!h-[70px]" type="primary" @click="quickCreate">快速创建</el-button>
-		<el-button class="!h-[70px]" type="primary" @click="createMeet"> 创建会议 </el-button>
+		<el-button class="!h-[70px]" type="primary" @click="createMeet"> 预约会议 </el-button>
 	</div>
 </template>
 

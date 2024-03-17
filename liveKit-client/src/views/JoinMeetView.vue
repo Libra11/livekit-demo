@@ -8,11 +8,14 @@
 <template>
 	<div class="flex h-full w-full items-center justify-center">
 		<el-form ref="form" :model="formData" label-width="0" class="flex w-80 flex-col items-center justify-center">
-			<el-form-item label="房间号" label-width="80px">
-				<el-input v-model="formData.roomId" placeholder="请输入房间号"></el-input>
+			<el-form-item label="会议号" label-width="80px" required>
+				<el-input v-model="formData.roomId" placeholder="请输入会议号"></el-input>
 			</el-form-item>
-			<el-form-item label="密码" label-width="80px">
-				<el-input v-model="formData.password" placeholder="请输入密码"></el-input>
+			<el-form-item label="入会密码" label-width="80px">
+				<el-input v-model="formData.password" placeholder="请输入入会密码"></el-input>
+			</el-form-item>
+			<el-form-item label="加密密码" label-width="80px">
+				<el-input v-model="formData.password" placeholder="请输入加密密码"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="join">加入房间</el-button>

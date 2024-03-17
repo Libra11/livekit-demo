@@ -29,9 +29,13 @@ type MeetConfig = {
 	startTime: Date
 	endTime: Date
 
+	isCameraEnabled: boolean
+	isMicroEnabled: boolean
+
 	isPrivate: boolean
 	hasPassword: boolean
 	isSecurity: boolean
+	isPasswordEncrypt: boolean
 
 	password: string
 }
@@ -75,5 +79,5 @@ function getMeetHistory() {
 	return fetch<Meet[]>(`/meet/history`, { method: 'GET' })
 }
 
-export { quickCreateMeet, createMeetByConfig, joinMeet, getInviteLink, getMeetByLink, getMeetArrangement, getMeetHistory}
+export { quickCreateMeet, createMeetByConfig, joinMeet, getInviteLink, getMeetByLink, getMeetArrangement, getMeetHistory }
 export type { Meet, MeetConfig, MeetToken }

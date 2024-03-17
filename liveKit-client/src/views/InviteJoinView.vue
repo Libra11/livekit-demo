@@ -56,7 +56,9 @@ let roomId: string
 onMounted(async () => {
 	await loadUserInfo()
 	await loadRoomId()
-	join()
+	if (userInfo && roomId) {
+		join()
+	}
 })
 
 const loadUserInfo = async () => {

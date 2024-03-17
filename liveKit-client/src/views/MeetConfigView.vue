@@ -1,7 +1,7 @@
 <template>
 	<div class="flex w-full flex-col items-center justify-center">
 		<div class="w-100">
-			<el-form ref="form" :model="formData" label-width="100px">
+			<el-form ref="form" :model="formData" label-width="150px">
 				<el-form-item label="会议名称" prop="name" required>
 					<el-input v-model="formData.name" />
 				</el-form-item>
@@ -47,9 +47,30 @@
 				<el-form-item label="入会密码" prop="password">
 					<el-input v-model="formData.password" />
 				</el-form-item>
-				<el-form-item label="开启安全加密" prop="isSecurity">
-					<el-switch v-model="formData.isSecurity" />
-				</el-form-item>
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="入会开启摄像头" prop="isCameraEnabled">
+							<el-switch v-model="formData.isCameraEnabled" />
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="入会开启麦克风" prop="isMicroEnabled">
+							<el-switch v-model="formData.isMicroEnabled" />
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="开启安全加密" prop="isSecurity">
+							<el-switch v-model="formData.isSecurity" />
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="使用密码加密" prop="isPasswordEncrypt">
+							<el-switch v-model="formData.isPasswordEncrypt" />
+						</el-form-item>
+					</el-col>
+				</el-row>
 				<el-form-item>
 					<el-button type="primary" @click="createMeet">创建会议</el-button>
 				</el-form-item>
@@ -70,9 +91,13 @@ const formData = reactive<MeetConfig>({
 	startTime: new Date(),
 	endTime: new Date(),
 
+	isCameraEnabled: true,
+	isMicroEnabled: true,
+
 	isPrivate: false,
 	hasPassword: false,
-	isSecurity: false,
+	isSecurity: true,
+	isPasswordEncrypt: false,
 
 	password: '',
 })
