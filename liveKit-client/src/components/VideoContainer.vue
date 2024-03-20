@@ -29,6 +29,7 @@ import GridLayout from './GridLayout.vue'
 import { LlkStore } from '@/store/modules/llk'
 import { UserStore } from '@/store/modules/user'
 import emitter from '@/utils/mitt'
+import { RoomStore } from '@/store/modules/room'
 
 interface IVideo {
 	videoTrack: Track | null
@@ -47,7 +48,18 @@ let localAudioTrack: Ref<LocalTrack | null> = ref(null)
 let localScreenTrack: Ref<LocalTrack | null> = ref(null)
 
 const route = useRoute()
-const { roomname, username, userId: userid, login, password } = route.query
+const roomStore = RoomStore()
+
+let { roomname, username, userId: userid, login, password } = route.query
+
+if (!roomname) {
+	roomname = roomStore.getRoomname
+	username = roomStore.getUsername
+	userid = roomStore.getUserId
+	login = roomStore.getLogin ? 'true' : 'false'
+	password = roomStore.getPassword
+}
+
 const userStore = UserStore()
 userStore.setUserName(username as string)
 onMounted(async () => {

@@ -25,9 +25,9 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import('../views/JoinView.vue'),
 	},
 	{
-		path: '/about',
-		name: 'About',
-		component: () => import('../views/AboutView.vue'),
+		path: '/room',
+		name: 'Room',
+		component: () => import('../views/RoomView.vue'),
 	},
 	{
 		path: '/user-center',
@@ -81,7 +81,7 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/replay',
 		name: 'Replay',
 		component: () => import('../views/ReplayView.vue'),
-	}
+	},
 ]
 
 const router = createRouter({

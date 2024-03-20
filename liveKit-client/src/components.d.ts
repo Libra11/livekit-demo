@@ -40,6 +40,7 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTimeSelect: typeof import('element-plus/es')['ElTimeSelect']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     GridLayout: typeof import('./components/GridLayout.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
     MessageContainer: typeof import('./components/MessageContainer.vue')['default']
