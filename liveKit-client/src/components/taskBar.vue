@@ -60,7 +60,7 @@ import type { LocalTrack } from 'livekit-client'
 import SwitchButton from './SwitchButton.vue'
 import emitter from '@/utils/mitt'
 import { BackgroundBlur, VirtualBackground } from '@livekit/track-processors'
-import { startRecord, stopRecord } from "@/api/record";
+import { startRecord, stopRecord } from '@/api/record'
 
 const props = defineProps<{
 	llk: LibraLiveKit | null
@@ -133,7 +133,7 @@ const getMicDevices = async () => {
 }
 
 const getImageList = () => {
-	const images = [new URL('../assets/background/1.jpg', import.meta.url).href]
+	const images = [new URL('../assets/background/1.jpg', import.meta.url).href, new URL('../assets/background/2.jpg', import.meta.url).href]
 	imageList.value = images
 }
 

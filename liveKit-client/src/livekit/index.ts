@@ -84,7 +84,7 @@ export default class LibraLiveKit extends EventEmitter {
 		if (e2eeEnabled) {
 			await this.room.setE2EEEnabled(true)
 		}
-		setLogLevel('trace')
+		setLogLevel('error')
 	}
 	async joinRoom() {
 		let token = ''
@@ -131,21 +131,49 @@ export default class LibraLiveKit extends EventEmitter {
 		}
 	}
 	// send message
-	async sendMessage(message: string) {
+	async sendMessage(message: string | File, type: number) {
 		const room = this.room
 		if (!room) return
-		const strData = JSON.stringify(message)
-		const encoder = new TextEncoder()
-		// publishData takes in a Uint8Array, so we need to convert it
-		const data = encoder.encode(strData)
+
+		console.log('sendMessage', message, type)
+
+		let data: Uint8Array = new Uint8Array()
+		if (type === 0) {
+			const strData = JSON.stringify(message)
+			const encoder = new TextEncoder()
+			// publishData takes in a Uint8Array, so we need to convert it
+			data = encoder.encode(strData)
+		} else {
+			// 读取文件
+			const bf = await (message as File).arrayBuffer()
+			data = new Uint8Array(bf)
+		}
+
+		// 复制一份data
+		let sendData = new Uint8Array(data)
+
+		// 将类型添加到数据中
+		const typeData = new Uint8Array([type])
+		if (type === 0) {
+			sendData = new Uint8Array([...typeData, ...data])
+		} else {
+			// 加入文件名
+			const fileName = new TextEncoder().encode((message as File).name)
+			// 文件名长度
+			const lengthData = new Uint8Array([fileName.length])
+			sendData = new Uint8Array([...typeData, ...lengthData, ...fileName, ...data])
+		}
+
 		if (this.cryptor) {
 			// encrypt data if e2ee is enabled
-			const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, this.cryptor, data)
-			room.localParticipant.publishData(new Uint8Array(encryptedData), DataPacket_Kind.LOSSY)
-			return
+			const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, this.cryptor, sendData)
+			sendData = new Uint8Array(encryptedData)
 		}
+
+		console.log('send message', sendData, type)
+		console.log('send message, raw', data, type)
 		// publish lossy data to the entire room
-		room.localParticipant.publishData(data, DataPacket_Kind.LOSSY)
+		room.localParticipant.publishData(sendData, DataPacket_Kind.RELIABLE)
 	}
 	initEvent() {
 		const room = this.room
@@ -249,6 +277,29 @@ export default class LibraLiveKit extends EventEmitter {
 		console.log('handleTrackUnmuted', publication, participant)
 	}
 
+	handleMessage = (data: Uint8Array, participant?: RemoteParticipant) => {
+		const type = data[0]
+
+		console.log('handleMessage', data, type, participant)
+
+		if (type === 0) {
+			const decoder = new TextDecoder()
+			const message = decoder.decode(data.slice(1))
+			console.log('handleMessageReceived', message, type, participant)
+
+			this.emit('message', message, type, participant)
+		} else {
+			const length = data[1]
+			const filename = new TextDecoder().decode(data.slice(2, 2 + length))
+
+			// 转换为File类型
+			const file = new File([data.slice(2 + length)], filename)
+
+			this.emit('message', file, type, participant)
+			console.log('handleDataReceived', file, type, participant)
+		}
+	}
+
 	handleMessageReceived = (data: Uint8Array, participant?: RemoteParticipant, kind?: DataPacket_Kind, topic?: any) => {
 		// decrypt first
 		if (this.cryptor) {
@@ -256,21 +307,18 @@ export default class LibraLiveKit extends EventEmitter {
 				.decrypt({ name: 'AES-GCM', iv: new Uint8Array(12) }, this.cryptor, data)
 				.then((res) => {
 					data = new Uint8Array(res)
-					const decoder = new TextDecoder()
-					const message = decoder.decode(data)
-					this.emit('message', message, participant)
-					console.log('handleMessageReceived', message, participant)
-					console.log('decrypt', message, this.cryptor)
+					// console.log('decrypt', data, this.cryptor)
+
+					this.handleMessage(data, participant)
 				})
 				.catch((err) => {
+					this.emit('message', '[消息解密失败]', 0, participant)
+
 					console.error('failed to decrypt message', err)
 				})
 			return
 		}
 
-		const decoder = new TextDecoder()
-		const message = decoder.decode(data)
-		this.emit('message', message, participant)
-		console.log('handleMessageReceived', message, participant)
+		this.handleMessage(data, participant)
 	}
 }

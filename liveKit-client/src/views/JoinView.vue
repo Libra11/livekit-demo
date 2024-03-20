@@ -30,6 +30,7 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { v4 as uuidv4 } from 'uuid'
+import { RoomStore } from '@/store/modules/room'
 
 const router = useRouter()
 const userId = uuidv4()
@@ -40,15 +41,15 @@ const formData = reactive({
 	password: '',
 })
 
+const roomStore = RoomStore()
+
 const login = () => {
+	roomStore.setLogin(false)
+	roomStore.setPassword(formData.password)
+	roomStore.setRoomname(formData.room)
+	roomStore.setUserId(userId)
 	router.push({
-		path: '/about',
-		query: {
-			username: formData.username,
-			roomname: formData.room,
-			userId,
-			password: formData.password,
-		},
+		path: '/room',
 	})
 }
 </script>

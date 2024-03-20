@@ -15,7 +15,7 @@
 				<el-input v-model="formData.password" placeholder="请输入入会密码"></el-input>
 			</el-form-item>
 			<el-form-item label="加密密码" label-width="80px">
-				<el-input v-model="formData.password" placeholder="请输入加密密码"></el-input>
+				<el-input v-model="formData.encryption" placeholder="请输入加密密码"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="join">加入房间</el-button>
@@ -28,6 +28,7 @@
 import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUserInfo, type UserInfo } from '@/api/userInfo'
+import { RoomStore } from '@/store/modules/room'
 
 const router = useRouter()
 
@@ -49,17 +50,18 @@ const loadUserInfo = async () => {
 const formData = reactive({
 	roomId: '',
 	password: '',
+	encryption: '',
 })
 
+const roomStore = RoomStore()
+
 const join = () => {
+	roomStore.setLogin(true)
+	roomStore.setUserId(userInfo.id)
+	roomStore.setRoomname(formData.roomId)
+	roomStore.setPassword(formData.encryption)
 	router.push({
-		path: '/about',
-		query: {
-			username: userInfo.name,
-			roomname: formData.roomId,
-			userId: userInfo.id,
-			login: 'true',
-		},
+		path: '/room',
 	})
 }
 </script>
