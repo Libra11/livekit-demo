@@ -8,7 +8,7 @@
 <template>
 	<div class="flex-c relative h-screen bg-black p-2">
 		<video-container />
-		<el-card class="h-full w-[30rem]" v-show="message">
+		<el-card class="card-width h-full" v-show="message">
 			<message-container />
 		</el-card>
 	</div>
@@ -34,5 +34,14 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 :deep(.el-card__body) {
 	@apply h-full;
+}
+
+.card-width {
+	width: 30rem;
+}
+@media (max-width: 768px) {
+	.card-width {
+		width: 19rem;
+	}
 }
 </style>

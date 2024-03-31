@@ -82,6 +82,11 @@ const routes: Array<RouteRecordRaw> = [
 		name: 'Replay',
 		component: () => import('../views/ReplayView.vue'),
 	},
+	{
+		path: '/start',
+		name: 'StartReplay',
+		component: () => import('../views/StartReplayView.vue'),
+	},
 ]
 
 const router = createRouter({
