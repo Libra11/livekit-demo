@@ -10,8 +10,17 @@
 		<div class="flex-1 overflow-auto">
 			<message-item :message="item" v-for="item in messageList" />
 		</div>
-		<el-upload ref="uploadRef" v-model:file-list="fileList" class="upload" action="#" drag multiple :auto-upload="false" :on-change="handleChange">
-			<el-icon class="el-icon--upload"><upload-filled /></el-icon>
+		<el-upload
+			ref="uploadRef"
+			v-model:file-list="fileList"
+			class="upload avatar-upload"
+			action="#"
+			drag
+			multiple
+			:auto-upload="false"
+			:on-change="handleChange"
+		>
+			<!-- <el-icon class="el-icon--upload"><upload-filled /></el-icon> -->
 			<div class="el-upload__text">拖拽文件或 <em>点击这里</em></div>
 		</el-upload>
 		<div class="flex-c">
@@ -130,4 +139,16 @@ watch(
 )
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.avatar-uploader .avatar {
+	width: 178px;
+	height: 178px;
+	display: block;
+}
+</style>
+
+<style>
+.el-upload-dragger {
+	padding: 10px;
+}
+</style>

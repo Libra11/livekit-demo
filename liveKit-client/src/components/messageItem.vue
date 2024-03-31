@@ -5,25 +5,31 @@
  * @Description: 
 -->
 <template>
-	<div class="my-2 px-2 py-5">
+	<div class="">
 		<div class="p-1" v-if="!message.isMe">
 			<div class="text-xs text-blue-400">{{ message.name }}</div>
 			<!-- 展示图片 -->
-			<div v-if="message.type === 1">
-				<img :src="loadImage(message.content as File)" :alt="(message.content as File).name" class="h-40 w-40" />
+			<div class="p-1" v-if="message.type === 1">
+				<img class="message-image" :src="loadImage(message.content as File)" :alt="(message.content as File).name" />
 			</div>
 			<!-- 展示文件 -->
-			<div v-else-if="message.type === 2" @click="download(message.content as File)">{{ (message.content as File).name }}</div>
+			<div class="file-download-button" v-else-if="message.type === 2" @click="download(message.content as File)">
+				<el-icon class="file-icon" size="40"><Document /></el-icon>
+				<div class="file-name">{{ (message.content as File).name }}</div>
+			</div>
 			<!-- 展示文字 -->
 			<div v-else class="break-words">{{ message.content }}</div>
 		</div>
 		<div class="p-1 text-right" v-else-if="message.isMe">
 			<div class="text-xs text-red-400">{{ message.name }}</div>
-			<div v-if="message.type === 1">
-				<img :src="loadImage(message.content as File)" :alt="(message.content as File).name" class="h-40 w-40" />
+			<div class="p-1" v-if="message.type === 1">
+				<img class="message-image right-image" :src="loadImage(message.content as File)" :alt="(message.content as File).name" />
 			</div>
 			<!-- 展示文件 -->
-			<div v-else-if="message.type === 2" @click="download(message.content as File)">{{ (message.content as File).name }}</div>
+			<div class="file-download-button" v-else-if="message.type === 2" @click="download(message.content as File)">
+				<el-icon class="file-icon" size="40"><Document /></el-icon>
+				<div class="file-name">{{ (message.content as File).name }}</div>
+			</div>
 			<!-- 展示文字 -->
 			<div v-else class="break-words">{{ message.content }}</div>
 		</div>
@@ -31,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import { Document } from '@element-plus/icons-vue'
 interface Message {
 	name: string
 	content: string | File
@@ -65,4 +72,38 @@ defineProps<{
 }>()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.file-download-button {
+	display: inline-block;
+	padding: 10px 10px;
+	border: 1px solid #007bff;
+	background-color: #007bff;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	border-radius: 5px;
+	// margin: 10px 0;
+}
+.file-download-button:hover {
+	background-color: #0056b3;
+}
+// .file-icon {
+// 	width: 50px;
+// 	height: 50px;
+// 	margin-right: 10px;
+// }
+.file-name {
+	flex-grow: 1;
+	font-size: 12px;
+}
+
+.message-image {
+	width: 100px;
+}
+
+.right-image {
+	margin-left: auto;
+	display: block;
+}
+</style>

@@ -40,4 +40,8 @@ export const RoomStore = defineStore('room', {
 		getPassword: (state) => state.password,
 		getLogin: (state) => state.login,
 	},
+	persist: {
+		enabled: true,
+		strategies: [{ storage: sessionStorage }],
+	},
 })

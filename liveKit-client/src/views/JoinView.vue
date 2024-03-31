@@ -48,6 +48,7 @@ const login = () => {
 	roomStore.setPassword(formData.password)
 	roomStore.setRoomname(formData.room)
 	roomStore.setUserId(userId)
+	roomStore.setUsername(formData.username)
 	router.push({
 		path: '/room',
 	})
