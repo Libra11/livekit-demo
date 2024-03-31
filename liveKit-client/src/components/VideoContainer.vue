@@ -203,4 +203,10 @@ const getEquallyDividedClass = () => {
 	left: calc(50% - 27rem);
 	background-color: rgba(29, 30, 31, 0.5);
 }
+@media (max-width: 768px) {
+	.bar {
+		left: calc(50% - 22rem);
+		background-color: rgba(29, 30, 31, 0.5);
+	}
+}
 </style>
