@@ -5,4 +5,4 @@
  * @LastEditors: Libra
  * @Description: 白名单
  */
-export default ['Login', 'Room', 'Join']
+export default ['Login', 'Room', 'Join', 'Replay', 'StartReplay']
