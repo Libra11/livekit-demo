@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<video ref="videoPlayer" controls></video>
+		<video ref="videoPlayer" controls class="full-screen-video"></video>
 	</div>
 </template>
 
@@ -37,3 +37,13 @@ const initHlsPlayer = () => {
 	}
 }
 </script>
+
+<style scoped>
+.full-screen-video {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+</style>
