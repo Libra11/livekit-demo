@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@livekit/track-processors": "^0.2.8",
 		"hls.js": "^1.5.2",
-		"livekit-client": "^1.9.6",
+		"livekit-client": "^1.15.13",
 		"mitt": "^3.0.1",
 		"pinia": "^2.0.33",
 		"uuid": "^9.0.0",
